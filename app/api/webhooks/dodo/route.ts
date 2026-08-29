@@ -64,6 +64,9 @@ export async function POST(request: Request) {
     const database = env.DB;
     const reservationId = event.data.metadata?.reservation_id;
     if (database && reservationId) {
+      // Keep existing D1 databases compatible when a deployment predates the
+      // reservation link column (the migration also ships with the project).
+      await database.prepare("ALTER TABLE ownerships ADD COLUMN reservation_id TEXT").run().catch(() => undefined);
       const reservation = await database
         .prepare("SELECT user_id, status, expected_amount_cents, is_outbid FROM reservations WHERE id = ?")
         .bind(reservationId)

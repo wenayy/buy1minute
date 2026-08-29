@@ -23,6 +23,7 @@ export async function POST(request: Request) {
 
   const database = env.DB;
   if (!database) return Response.json({ error: "Listing storage is unavailable" }, { status: 503 });
+  await database.prepare("ALTER TABLE ownerships ADD COLUMN reservation_id TEXT").run().catch(() => undefined);
   const requestUserId = request.headers.get("oai-authenticated-user-id");
   const reservation = await database.prepare("SELECT user_id, status FROM reservations WHERE id = ?").bind(reservationId).first<{ user_id: string | null; status: string }>();
   if (!reservation || reservation.status !== "converted") return Response.json({ error: "Payment is still being confirmed. Wait a moment and try publishing again." }, { status: 409 });
