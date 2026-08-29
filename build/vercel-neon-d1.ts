@@ -16,9 +16,10 @@ const schemaStatements = [
 
 function postgresSql(sqlText: string): string {
   let index = 0;
+  const isIgnoreInsert = /INSERT\s+OR\s+IGNORE\s+INTO/i.test(sqlText);
   let result = sqlText.replace(/INSERT\s+OR\s+IGNORE\s+INTO/gi, "INSERT INTO");
   result = result.replace(/\?/g, () => `$${++index}`);
-  if (/INSERT INTO/i.test(result)) result = `${result} ON CONFLICT DO NOTHING`;
+  if (isIgnoreInsert) result = `${result} ON CONFLICT DO NOTHING`;
   return result;
 }
 
