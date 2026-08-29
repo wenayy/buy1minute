@@ -72,9 +72,6 @@ export default async function MinutePage({ params }: PageProps) {
           </a>
           <div className="minute-stats">
             <div><span>OWNED SINCE</span><strong>{new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(minute.owner.ownedSince))}</strong></div>
-            <div><span>PAGE VIEWS</span><strong>{minute.owner.pageViews.toLocaleString()}</strong></div>
-            <div><span>TAKEOVER IMPRESSIONS</span><strong>{minute.owner.takeoverImpressions.toLocaleString()}</strong></div>
-            <div><span>OUTBOUND CLICKS</span><strong>{minute.owner.outboundClicks.toLocaleString()}</strong></div>
           </div>
         </section>
       ) : (

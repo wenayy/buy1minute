@@ -129,7 +129,7 @@ function OwnedTakeover({ state, countdown, minuteIndex }: { state: MinuteState; 
           Visit <span>↗</span>
         </a>
         <div className={`remaining ${seconds <= 5 ? "remaining-urgent" : ""}`}>
-          <span>{formatPrice(owner.purchasePriceCents)} · {owner.outboundClicks.toLocaleString()} clicks</span>
+          <span>{formatPrice(owner.purchasePriceCents)} · WINNING BID</span>
           <strong>{countdown} remaining</strong>
         </div>
         <a className="text-link outbid-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}?outbid=${owner.purchasePriceCents}`}>
@@ -157,7 +157,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
       <div className="featured-copy">
         <span className="eyebrow featured-eyebrow">
           <span className="live-badge"><i /></span>
-          <em>{state.time} IS OPEN</em> · REIGNING BID {formatPrice(champion.purchasePriceCents)} · {champion.outboundClicks.toLocaleString()} CLICKS
+          <em>{state.time} IS OPEN</em> · REIGNING BID {formatPrice(champion.purchasePriceCents)}
         </span>
         <div className="owner-heading">
           <LogoMark product={champion.product} />
@@ -268,10 +268,6 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
               <span className="home-lb-bid">
                 <strong>{formatPrice(owner.purchasePriceCents)}</strong>
                 <small>WINNING BID</small>
-              </span>
-              <span className="home-lb-clicks">
-                <strong>{owner.outboundClicks.toLocaleString()}</strong>
-                <small>CLICKS</small>
               </span>
               <div className="home-lb-actions">
                 <a

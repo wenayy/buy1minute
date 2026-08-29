@@ -11,13 +11,11 @@ type SortKey = "bid" | "clicks" | "newest";
 
 const TABS: { key: SortKey; label: string }[] = [
   { key: "bid", label: "HIGHEST BID" },
-  { key: "clicks", label: "MOST CLICKED" },
   { key: "newest", label: "NEWEST" },
 ];
 
 const comparators: Record<SortKey, (a: OwnedMinute, b: OwnedMinute) => number> = {
   bid: (a, b) => b.purchasePriceCents - a.purchasePriceCents,
-  clicks: (a, b) => b.outboundClicks - a.outboundClicks,
   newest: (a, b) => new Date(b.ownedSince).getTime() - new Date(a.ownedSince).getTime(),
 };
 
@@ -76,7 +74,6 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
                   {product.category && <span className="lb-cat">{CATEGORY_ICON[product.category] ?? "◆"} {product.category}</span>}
                   <span>{timeAgo(owner.ownedSince)}</span>
                   <a href={product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored" className="lb-domain">{host}</a>
-                  <span>{owner.outboundClicks.toLocaleString()} clicks</span>
                   <a href={`/minute/${slug}`} className="lb-details">see details</a>
                 </div>
               </div>

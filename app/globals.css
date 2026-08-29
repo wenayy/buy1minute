@@ -384,3 +384,4 @@
 .minute-brand-icon .brand-icon-fallback{color:#ff4e24}
 .minute-owned{--tile-accent:var(--signal)}
 .home-lb-footer{display:flex;justify-content:center;padding:26px 0 0;border-top:1px solid var(--line)}
+.is-transitioning .live-frame{animation:none!important}
