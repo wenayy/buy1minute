@@ -62,7 +62,7 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
           {categories.map((item) => <option key={item} value={item}>{item.toUpperCase()}</option>)}
         </select>
       </label>
-      <ol className="lb-list">
+      {ranked.length === 0 ? <div className="leaderboard-empty"><strong>No minutes listed yet.</strong><span>Be the first to claim a minute and appear here.</span></div> : <ol className="lb-list">
         {ranked.map((owner, index) => {
           const product = owner.product;
           const host = displayHost(product.websiteUrl);
@@ -101,7 +101,7 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
             </li>
           );
         })}
-      </ol>
+      </ol>}
     </>
   );
 }

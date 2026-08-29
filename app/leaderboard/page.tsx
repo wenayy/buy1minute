@@ -5,9 +5,9 @@ import { formatPrice } from "../lib/pricing";
 import { seededOwnerships } from "../lib/seed-data";
 
 const totalBids = seededOwnerships.reduce((sum, owner) => sum + owner.purchasePriceCents, 0);
-const topBid = Math.max(...seededOwnerships.map((owner) => owner.purchasePriceCents));
-// Full set is large now; show the top ranks and keep the totals honest.
-const topOwners = [...seededOwnerships].sort((a, b) => b.purchasePriceCents - a.purchasePriceCents).slice(0, 60);
+const topBid = seededOwnerships.length ? Math.max(...seededOwnerships.map((owner) => owner.purchasePriceCents)) : 0;
+// Pass the complete set so NEWEST is genuinely newest, not newest among bid-ranked rows.
+const leaderboardOwners = seededOwnerships;
 
 export default function LeaderboardPage() {
   return (
@@ -25,7 +25,7 @@ export default function LeaderboardPage() {
           <div><span>TOTAL BID VOLUME</span><strong>{formatPrice(totalBids)}</strong></div>
         </div>
       </section>
-      <LeaderboardTable owners={topOwners} />
+      <LeaderboardTable owners={leaderboardOwners} />
       <div className="leaderboard-note">All brands shown are demonstration data. Whoever bids the most owns the minute — until someone outbids them.</div>
       <SiteFooter />
     </main>
