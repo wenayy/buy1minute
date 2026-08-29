@@ -1,0 +1,1 @@
+var e=[`AI`,`Design`,`Dev tools`,`Education`,`Finance`,`Infrastructure`,`Marketing`,`Productivity`,`Payments`,`Shopping`,`Social`,`Video`,`Other`],t={AI:`✦`,Design:`✎`,"Dev tools":`◈`,Education:`▲`,Finance:`◆`,Infrastructure:`☁`,Marketing:`◉`,Productivity:`⚡`,Payments:`▤`,Shopping:`◧`,Social:`◎`,Video:`▶`,Other:`■`};export{e as n,t};

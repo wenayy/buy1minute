@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 
-export async function GET(request: Request) {
+export async function GET() {
   const database = env.DB;
   if (!database) return Response.json({ owners: [] });
   try {

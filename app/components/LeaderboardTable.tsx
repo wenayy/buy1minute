@@ -8,7 +8,7 @@ import { minuteIndexToSlug, minuteIndexToTime, timeAgo } from "../lib/time";
 import type { OwnedMinute } from "../lib/types";
 import { CATEGORY_OPTIONS } from "../lib/categories";
 
-type SortKey = "bid" | "clicks" | "newest";
+type SortKey = "bid" | "newest";
 
 const TABS: { key: SortKey; label: string }[] = [
   { key: "bid", label: "HIGHEST BID" },

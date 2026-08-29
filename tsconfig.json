@@ -25,5 +25,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "redesign", "dist", "build/vercel-neon-d1.ts", "build/vercel-cloudflare-workers.ts"]
 }

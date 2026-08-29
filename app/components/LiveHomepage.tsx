@@ -156,11 +156,12 @@ function OwnedTakeover({ state, countdown, minuteIndex }: { state: MinuteState; 
           Visit <span>↗</span>
         </a>
         <div className={`remaining ${seconds <= 5 ? "remaining-urgent" : ""}`}>
-          <span>{formatPrice(owner.purchasePriceCents)} · WINNING BID</span>
+          <span>{formatPrice(owner.purchasePriceCents)} · {owner.outboundClicks.toLocaleString("en-US")} clicks</span>
           <strong>{countdown} remaining</strong>
         </div>
+        <div className="minute-progress" aria-hidden="true"><span style={{ width: `${((60 - seconds) / 60) * 100}%` }} /></div>
         <a className="text-link outbid-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}?outbid=${owner.purchasePriceCents}`}>
-          Outbid {owner.product.name} →
+          Outbid from {formatPrice(owner.purchasePriceCents + 100)} →
         </a>
       </div>
       <ProductVisual product={owner.product} />
@@ -184,7 +185,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
       <div className="featured-copy">
         <span className="eyebrow featured-eyebrow">
           <span className="live-badge"><i /></span>
-          <em>{state.time} IS OPEN</em>{champion ? <> · REIGNING BID {formatPrice(champion.purchasePriceCents)}</> : <> · BE THE FIRST TO CLAIM IT</>}
+          <em>{state.time} IS OPEN</em>{champion ? <> · TODAY’S TOP SPOT · {formatPrice(champion.purchasePriceCents)}</> : <> · BE THE FIRST TO CLAIM IT</>}
         </span>
         {champion ? <>
           <div className="owner-heading">
@@ -231,8 +232,10 @@ function UpcomingMinutes({ minuteIndex, owners }: { minuteIndex: number; owners:
       <div className="upcoming-row">
         {upcoming.map((minute) => {
           const owner = ownersByMinute.get(minute.minuteIndex) ?? minute.owner;
+          // Owned minutes lead to their page (you outbid from there); open
+          // minutes go straight to claim.
           const href = owner
-            ? `/buy/${minuteIndexToSlug(minute.minuteIndex)}?outbid=${owner.purchasePriceCents}`
+            ? `/minute/${minuteIndexToSlug(minute.minuteIndex)}`
             : `/buy/${minuteIndexToSlug(minute.minuteIndex)}`;
           return (
             <a
@@ -248,7 +251,7 @@ function UpcomingMinutes({ minuteIndex, owners }: { minuteIndex: number; owners:
                     <LogoMark product={owner.product} small />
                     <strong>{owner.product.name}</strong>
                   </span>
-                  <span className="upcoming-cta">Outbid {formatPrice(owner.purchasePriceCents)} →</span>
+                  <span className="upcoming-cta">{formatPrice(owner.purchasePriceCents)} · view →</span>
                 </>
               ) : (
                 <>
@@ -291,7 +294,7 @@ function HomeLeaderboard({ minuteIndex, owners }: { minuteIndex: number; owners:
               </a>
               <span className="home-lb-bid">
                 <strong>{formatPrice(owner.purchasePriceCents)}</strong>
-                <small>WINNING BID</small>
+                <small>PRICE</small>
               </span>
               <span className="home-lb-clicks">
                 <strong>{owner.outboundClicks.toLocaleString("en-US")}</strong>

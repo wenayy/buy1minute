@@ -1,0 +1,1 @@
+var e=1440;function t(t){let n=(t%e+e)%e,r=Math.floor(n/60),i=n%60;return`${r.toString().padStart(2,`0`)}:${i.toString().padStart(2,`0`)}`}function n(e){return t(e).replace(`:`,`-`)}function r(e){let t=/^(\d{2})-(\d{2})$/.exec(e);if(!t)return null;let n=Number(t[1]),r=Number(t[2]);return n>23||r>59?null:n*60+r}export{t as n,r,n as t};

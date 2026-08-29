@@ -1,15 +1,40 @@
 import { env } from "cloudflare:workers";
 import { CATEGORY_OPTIONS } from "../../lib/categories";
+import { getCheckoutTotal } from "../../lib/pricing";
 
 function clean(value: unknown, max: number): string {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
 }
 
 function slugify(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0,  forty);
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
 }
 
-const forty = 40;
+// Local/test convenience: the Dodo webhook can't reach localhost, so payments
+// never get marked "converted" there. In test mode we confirm the reservation
+// ourselves (create ownership from the reserved minutes) so publishing works
+// end-to-end locally. In live mode the webhook remains the source of truth.
+async function confirmReservationForTest(database: D1Database, reservationId: string): Promise<void> {
+  const reserved = await database
+    .prepare("SELECT minute_index FROM reservation_minutes WHERE reservation_id = ? AND active = 1")
+    .bind(reservationId)
+    .all<{ minute_index: number }>();
+  const indices = reserved.results.map((row) => row.minute_index);
+  if (indices.length === 0) return;
+  const reservation = await database.prepare("SELECT user_id FROM reservations WHERE id = ?").bind(reservationId).first<{ user_id: string | null }>();
+  const userId = reservation?.user_id || `buyer-${reservationId}`;
+  const email = `${userId}@buy1minute.local`;
+  const ownershipId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const total = getCheckoutTotal(indices) ?? indices.length * 100;
+  await database.batch([
+    database.prepare("INSERT OR IGNORE INTO users (id, email, display_name, role, created_at) VALUES (?, ?, ?, 'owner', ?)").bind(userId, email, "Buyer", now),
+    database.prepare("INSERT OR IGNORE INTO ownerships (id, user_id, product_id, purchased_at, purchase_price_cents, active, reservation_id) VALUES (?, ?, NULL, ?, ?, 1, ?)").bind(ownershipId, userId, now, total, reservationId),
+    ...indices.map((index) => database.prepare("INSERT OR IGNORE INTO ownership_minutes (ownership_id, minute_index, active) VALUES (?, ?, 1)").bind(ownershipId, index)),
+    database.prepare("UPDATE reservations SET status = 'converted' WHERE id = ?").bind(reservationId),
+    database.prepare("UPDATE reservation_minutes SET active = 0 WHERE reservation_id = ?").bind(reservationId),
+  ]);
+}
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
@@ -29,7 +54,14 @@ export async function POST(request: Request) {
   await database.prepare("ALTER TABLE products ADD COLUMN category TEXT").run().catch(() => undefined);
   await database.prepare("ALTER TABLE ownerships ADD COLUMN reservation_id TEXT").run().catch(() => undefined);
   const requestUserId = request.headers.get("oai-authenticated-user-id");
-  const reservation = await database.prepare("SELECT user_id, status FROM reservations WHERE id = ?").bind(reservationId).first<{ user_id: string | null; status: string }>();
+  let reservation = await database.prepare("SELECT user_id, status FROM reservations WHERE id = ?").bind(reservationId).first<{ user_id: string | null; status: string }>();
+
+  // Without a reachable webhook (local/test), confirm the payment here.
+  if (reservation && reservation.status !== "converted" && env.DODO_PAYMENTS_ENVIRONMENT !== "live") {
+    await confirmReservationForTest(database, reservationId);
+    reservation = await database.prepare("SELECT user_id, status FROM reservations WHERE id = ?").bind(reservationId).first<{ user_id: string | null; status: string }>();
+  }
+
   if (!reservation || reservation.status !== "converted") return Response.json({ error: "Payment is still being confirmed. Wait a moment and try publishing again." }, { status: 409 });
   if (requestUserId && reservation.user_id && requestUserId !== reservation.user_id) return Response.json({ error: "This payment belongs to another account" }, { status: 403 });
   const ownership = await database.prepare("SELECT om.minute_index, o.id AS ownership_id, o.product_id FROM ownership_minutes om JOIN ownerships o ON o.id = om.ownership_id WHERE o.reservation_id = ? AND o.active = 1 AND om.active = 1 LIMIT 1").bind(reservationId).first<{ minute_index: number; ownership_id: string; product_id: string | null }>();
