@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BrandIcon } from "../../components/BrandIcon";
 import { LogoMark } from "../../components/LogoMark";
@@ -56,9 +55,9 @@ export default async function MinutePage({ params }: PageProps) {
             <a className="primary-link" href={owner.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored">
               Visit <span>↗</span>
             </a>
-            <Link className="text-link minute-outbid-link" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
+            <a className="text-link minute-outbid-link" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
               Outbid for {formatPrice(owner.purchasePriceCents + 100)} →
-            </Link>
+            </a>
           </div>
           <a
             className="minute-brand-card"
@@ -88,7 +87,7 @@ export default async function MinutePage({ params }: PageProps) {
           {minute.priceCents === null ? (
             <div className="auction-notice"><span>{minute.pricingLabel}</span><strong>AUCTION COMING SOON</strong></div>
           ) : (
-            <Link className="primary-link" href={`/buy/${slug}`}>Own {minute.time} for {formatPrice(minute.priceCents)} <span>→</span></Link>
+            <a className="primary-link" href={`/buy/${slug}`}>Own {minute.time} for {formatPrice(minute.priceCents)} <span>→</span></a>
           )}
         </section>
       )}

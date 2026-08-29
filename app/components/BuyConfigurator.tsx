@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { formatPrice, getCheckoutTotal, parseDollarAmountToCents } from "../lib/pricing";
 import { minuteIndexToSlug, minuteIndexToTime } from "../lib/time";
@@ -113,7 +112,7 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
         {checkoutState === "error" && <p className="form-error">{checkoutError || "Checkout could not start. Try again."}</p>}
         <small className="checkout-note">One payment gives you one 60-second homepage takeover each day.</small>
         <small className="checkout-note">Complete payment, then publish your name, link, and description.</small>
-        <Link className="text-link" href={`/minute/${minuteIndexToSlug(startIndex)}`}>← Back to minute</Link>
+        <a className="text-link" href={`/minute/${minuteIndexToSlug(startIndex)}`}>← Back to minute</a>
       </section>
     </div>
   );

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 
@@ -16,9 +15,8 @@ export default function HowItWorksPage() {
         <article><span>02 / 03</span><h2>Make it yours</h2><p>Add your company, product, project, artwork, or profile. You control the message; we keep the format fast and safe.</p></article>
         <article><span>03 / 03</span><h2>Own the homepage</h2><p>Every day at your minute, Buy1Minute becomes yours for 60 seconds. Your permanent minute page never disappears.</p></article>
       </section>
-      <section className="shared-clock-callout"><span>ONE SHARED CLOCK</span><strong>UTC</strong><p>Your local conversion is always shown, but ownership follows one global timeline. That is what makes each minute scarce.</p><Link className="primary-link" href="/explore">Find your minute →</Link></section>
+      <section className="shared-clock-callout"><span>ONE SHARED CLOCK</span><strong>UTC</strong><p>Your local conversion is always shown, but ownership follows one global timeline. That is what makes each minute scarce.</p><a className="primary-link" href="/explore">Find your minute →</a></section>
       <SiteFooter />
     </main>
   );
 }
-

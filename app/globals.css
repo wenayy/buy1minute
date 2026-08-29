@@ -387,3 +387,18 @@
 .minute-owned{--tile-accent:var(--signal)}
 .home-lb-footer{display:flex;justify-content:center;padding:26px 0 0;border-top:1px solid var(--line)}
 .is-transitioning .live-frame{animation:none!important}
+
+/* Keep the explanatory and publish screens compact enough to scan without a long scroll. */
+.shared-clock-callout{min-height:420px;padding:56px 10vw}
+.shared-clock-callout>strong{font-size:clamp(6rem,16vw,16rem)}
+.setup-layout{min-height:680px}
+.brand-form{padding:48px 7vw 48px 0}
+.brand-preview{padding:24px}
+.preview-content{padding:28px 0}
+@media(max-width:760px){
+  .shared-clock-callout{min-height:390px;padding:50px 0}
+  .shared-clock-callout>strong{font-size:clamp(6rem,28vw,12rem)}
+  .setup-layout{min-height:0}
+  .brand-form{padding:42px 0}
+  .brand-preview{min-height:520px}
+}
