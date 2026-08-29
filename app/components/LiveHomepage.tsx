@@ -29,6 +29,7 @@ function sendEvent(eventType: string, minuteIndex: number) {
 
 export function LiveHomepage() {
   const [now, setNow] = useState<Date | null>(null);
+  const [databaseOwners, setDatabaseOwners] = useState<OwnedMinute[]>([]);
   const [transitioning, setTransitioning] = useState(false);
   const lastMinute = useRef<number | null>(null);
 
@@ -39,8 +40,27 @@ export function LiveHomepage() {
     return () => window.clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    let active = true;
+    fetch("/api/live-state").then((response) => response.ok ? response.json() : null).then((payload: { owners?: OwnedMinute[] } | null) => {
+      if (active && payload?.owners) setDatabaseOwners(payload.owners);
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+
   const minuteIndex = now ? minuteIndexFromDate(now) : 0;
-  const current = useMemo(() => getMinuteState(minuteIndex), [minuteIndex]);
+  const owners = useMemo(() => {
+    const merged = new Map(seededOwnerships.map((owner) => [owner.minuteIndex, owner]));
+    for (const owner of databaseOwners) merged.set(owner.minuteIndex, owner);
+    return [...merged.values()];
+  }, [databaseOwners]);
+  const ownersByMinute = useMemo(() => new Map(owners.map((owner) => [owner.minuteIndex, owner])), [owners]);
+  const current = useMemo(() => {
+    const base = getMinuteState(minuteIndex);
+    const owner = ownersByMinute.get(minuteIndex);
+    return { ...base, owner, status: owner ? "owned" as const : base.status };
+  }, [minuteIndex, ownersByMinute]);
+  const ranked = useMemo(() => [...owners].sort((a, b) => b.purchasePriceCents - a.purchasePriceCents), [owners]);
 
   useEffect(() => {
     if (!now) return;
@@ -80,11 +100,11 @@ export function LiveHomepage() {
         {current.owner ? (
           <OwnedTakeover state={current} countdown={countdown} minuteIndex={minuteIndex} />
         ) : (
-          <FeaturedTakeover state={current} champion={topBidder} minuteIndex={minuteIndex} />
+          <FeaturedTakeover state={current} champion={ranked[0] ?? topBidder} minuteIndex={minuteIndex} />
         )}
       </div>
       <UpcomingMinutes minuteIndex={minuteIndex} />
-      <HomeLeaderboard minuteIndex={minuteIndex} />
+      <HomeLeaderboard minuteIndex={minuteIndex} owners={ranked} />
     </main>
   );
 }
@@ -240,8 +260,8 @@ function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
   );
 }
 
-function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
-  const ranked = rankedByBid.slice(0, 10);
+function HomeLeaderboard({ minuteIndex, owners }: { minuteIndex: number; owners: OwnedMinute[] }) {
+  const ranked = owners.slice(0, 10);
   return (
     <section className="home-leaderboard" aria-label="Minutes ranked by highest bid">
       <div className="home-lb-heading">
