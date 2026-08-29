@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LogoMark } from "./LogoMark";
 import { ProductVisual } from "./ProductVisual";
@@ -133,9 +132,9 @@ function OwnedTakeover({ state, countdown, minuteIndex }: { state: MinuteState; 
           <span>{formatPrice(owner.purchasePriceCents)} · {owner.outboundClicks.toLocaleString()} clicks</span>
           <strong>{countdown} remaining</strong>
         </div>
-        <Link className="text-link outbid-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}?outbid=${owner.purchasePriceCents}`}>
+        <a className="text-link outbid-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}?outbid=${owner.purchasePriceCents}`}>
           Outbid {owner.product.name} →
-        </Link>
+        </a>
       </div>
       <ProductVisual product={owner.product} />
       <div className="owned-meta">
@@ -175,20 +174,20 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
           >
             Visit <span>↗</span>
           </a>
-          <Link className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>
+          <a className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>
             Outbid the champion →
-          </Link>
+          </a>
         </div>
       </div>
       <aside className="claim-block featured-claim">
         <span>CLAIM {state.time}</span>
         <strong>{priceLabel}</strong>
         {state.priceCents === null ? (
-          <Link className="primary-link muted-link" href="/explore">Explore available minutes</Link>
+          <a className="primary-link muted-link" href="/explore">Explore available minutes</a>
         ) : (
-          <Link className="primary-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}`}>
+          <a className="primary-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}`}>
             Claim this minute <span>→</span>
-          </Link>
+          </a>
         )}
         <small>No one owns {state.time} yet. Claim it and take over the homepage every day.</small>
       </aside>
@@ -203,7 +202,7 @@ function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
     <section className="upcoming-wrap" aria-label="Upcoming minutes to bid on">
       <div className="upcoming-heading">
         <span>NEXT UP · BID ON UPCOMING MINUTES</span>
-        <Link href="/explore">Explore all 1,440 →</Link>
+        <a href="/explore">Explore all 1,440 →</a>
       </div>
       <div className="upcoming-row">
         {upcoming.map((minute) => {
@@ -212,7 +211,7 @@ function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
             ? `/buy/${minuteIndexToSlug(minute.minuteIndex)}?outbid=${owner.purchasePriceCents}`
             : `/buy/${minuteIndexToSlug(minute.minuteIndex)}`;
           return (
-            <Link
+            <a
               key={minute.minuteIndex}
               href={href}
               className={`upcoming-card ${owner ? "upcoming-owned" : "upcoming-open"}`}
@@ -233,7 +232,7 @@ function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
                   <span className="upcoming-cta upcoming-cta-open">Claim now →</span>
                 </>
               )}
-            </Link>
+            </a>
           );
         })}
       </div>
@@ -247,7 +246,7 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
     <section className="home-leaderboard" aria-label="Minutes ranked by highest bid">
       <div className="home-lb-heading">
         <span>THE LEADERBOARD · HIGHEST BIDS OWN THE MINUTE</span>
-        <Link href="/leaderboard">See the full leaderboard →</Link>
+        <a href="/leaderboard">See the full leaderboard →</a>
       </div>
       <ol className="home-lb-list">
         {ranked.map((owner, index) => {
@@ -259,13 +258,13 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
               style={index === 0 ? ({ "--row-accent": "#ff4e24" } as React.CSSProperties) : undefined}
             >
               <span className="home-lb-rank">{(index + 1).toString().padStart(2, "0")}</span>
-              <Link href={`/minute/${minuteIndexToSlug(owner.minuteIndex)}`} className="home-lb-brand">
+              <a href={`/minute/${minuteIndexToSlug(owner.minuteIndex)}`} className="home-lb-brand">
                 <LogoMark product={owner.product} small />
                 <span>
                   <strong>{owner.product.name}</strong>
                   <small>{minuteIndexToTime(owner.minuteIndex)} UTC{isLive ? " · LIVE NOW" : ""}</small>
                 </span>
-              </Link>
+              </a>
               <span className="home-lb-bid">
                 <strong>{formatPrice(owner.purchasePriceCents)}</strong>
                 <small>WINNING BID</small>
@@ -284,19 +283,19 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
                 >
                   Visit ↗
                 </a>
-                <Link
+                <a
                   className="home-lb-outbid"
                   href={`/buy/${minuteIndexToSlug(owner.minuteIndex)}?outbid=${owner.purchasePriceCents}`}
                 >
                   Outbid →
-                </Link>
+                </a>
               </div>
             </li>
           );
         })}
       </ol>
       <div className="home-lb-footer">
-        <Link className="text-link" href="/leaderboard">See the full leaderboard →</Link>
+        <a className="text-link" href="/leaderboard">See the full leaderboard →</a>
       </div>
     </section>
   );

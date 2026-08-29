@@ -7,12 +7,11 @@ export function SiteHeader({ inverse = false }: { inverse?: boolean }) {
         BUY<span>1</span>MINUTE
       </Link>
       <nav aria-label="Primary navigation">
-        <Link href="/explore">Explore</Link>
-        <Link href="/leaderboard">Leaderboard</Link>
-        <Link href="/how-it-works">How it works</Link>
-        <Link href="/my-minutes">My minutes</Link>
+        <a href="/explore">Explore</a>
+        <a href="/leaderboard">Leaderboard</a>
+        <a href="/how-it-works">How it works</a>
+        <a href="/my-minutes">My minutes</a>
       </nav>
     </header>
   );
 }
-
