@@ -42,10 +42,17 @@ export function LiveHomepage() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/live-state").then((response) => response.ok ? response.json() : null).then((payload: { owners?: OwnedMinute[] } | null) => {
-      if (active && payload?.owners) setDatabaseOwners(payload.owners);
-    }).catch(() => undefined);
-    return () => { active = false; };
+    const refreshOwners = () => {
+      fetch("/api/live-state").then((response) => response.ok ? response.json() : null).then((payload: { owners?: OwnedMinute[] } | null) => {
+        if (active && payload?.owners) setDatabaseOwners(payload.owners);
+      }).catch(() => undefined);
+    };
+    refreshOwners();
+    // A purchase can complete while the homepage is open. Keep the live
+    // minute, upcoming cards, and leaderboard in sync without a hard refresh.
+    const interval = window.setInterval(refreshOwners, 10_000);
+    window.addEventListener("focus", refreshOwners);
+    return () => { active = false; window.clearInterval(interval); window.removeEventListener("focus", refreshOwners); };
   }, []);
 
   const minuteIndex = now ? minuteIndexFromDate(now) : 0;
@@ -103,7 +110,7 @@ export function LiveHomepage() {
           <FeaturedTakeover state={current} champion={ranked[0] ?? topBidder} minuteIndex={minuteIndex} />
         )}
       </div>
-      <UpcomingMinutes minuteIndex={minuteIndex} />
+      <UpcomingMinutes minuteIndex={minuteIndex} owners={owners} />
       <HomeLeaderboard minuteIndex={minuteIndex} owners={ranked} />
     </main>
   );
@@ -134,7 +141,7 @@ function OwnedTakeover({ state, countdown, minuteIndex }: { state: MinuteState; 
       <div className="takeover-copy">
         <span className="eyebrow live-eyebrow"><span className="live-badge"><i /></span>LIVE · THIS MINUTE BELONGS TO</span>
         <div className="owner-heading">
-          <LogoMark product={owner.product} />
+          <LogoMark product={owner.product} interactive />
           <h1>{owner.product.name}</h1>
         </div>
         <p className="takeover-tagline">{owner.product.tagline}</p>
@@ -181,7 +188,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
         </span>
         {champion ? <>
           <div className="owner-heading">
-            <LogoMark product={champion.product} />
+            <LogoMark product={champion.product} interactive />
             <h1>{champion.product.name}</h1>
           </div>
           <p className="takeover-tagline">{champion.product.tagline}</p>
@@ -212,8 +219,9 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
 }
 
 // Next few minutes — bid on upcoming slots before they arrive.
-function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
+function UpcomingMinutes({ minuteIndex, owners }: { minuteIndex: number; owners: OwnedMinute[] }) {
   const upcoming = [1, 2, 3, 4, 5, 6].map((offset) => getMinuteState(minuteIndex + offset));
+  const ownersByMinute = new Map(owners.map((owner) => [owner.minuteIndex, owner]));
   return (
     <section className="upcoming-wrap" aria-label="Upcoming minutes to bid on">
       <div className="upcoming-heading">
@@ -222,7 +230,7 @@ function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
       </div>
       <div className="upcoming-row">
         {upcoming.map((minute) => {
-          const owner = minute.owner;
+          const owner = ownersByMinute.get(minute.minuteIndex) ?? minute.owner;
           const href = owner
             ? `/buy/${minuteIndexToSlug(minute.minuteIndex)}?outbid=${owner.purchasePriceCents}`
             : `/buy/${minuteIndexToSlug(minute.minuteIndex)}`;

@@ -20,7 +20,7 @@ export function ProductVisual({ product, compact = false }: { product: Product; 
         <BrandIcon websiteUrl={product.websiteUrl} fallback={product.shortName} size={256} className="visual-brand-icon" imgClassName="visual-brand-icon-img" />
         <strong>{product.name}</strong>
       </div>
-      <div className="visual-caption">A fictional brand used for preview.</div>
+      <div className="visual-caption">LIVE PRODUCT PREVIEW · {product.category ?? "OTHER"}</div>
     </div>
   );
 }

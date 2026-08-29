@@ -26,7 +26,7 @@ export default async function LeaderboardPage() {
         </div>
       </section>
       <LeaderboardTable owners={owners} />
-      <div className="leaderboard-note">All brands shown are demonstration data. Whoever bids the most owns the minute — until someone outbids them.</div>
+      <div className="leaderboard-note">Highest bid wins the minute. Every listing is live and can be outbid.</div>
       <SiteFooter />
     </main>
   );
