@@ -18,6 +18,10 @@ const products: Product[] = [
   { id: "anthropic", name: "Anthropic", shortName: "AN", websiteUrl: "https://anthropic.com", tagline: "AI research and products that put safety first.", description: "Makers of Claude — building reliable, interpretable, and steerable AI systems.", accentColor: "#d97757", visualVariant: "grid", xHandle: "anthropicai", category: "AI" },
 ];
 
+// Keep the fresh-production experience empty while real listings are added through checkout.
+// Set to true later if a local visual demo dataset is needed again.
+const DEMO_DATA_ENABLED = false;
+
 // Deterministic pseudo-random in [0,1) so the demo data is stable across renders.
 function rand(seed: number): number {
   const x = Math.sin(seed) * 43758.5453;
@@ -28,6 +32,7 @@ function rand(seed: number): number {
 // minute you browse looks alive (roughly 40% owned, the rest claimable).
 export const seededOwnerships: OwnedMinute[] = (() => {
   const owners: OwnedMinute[] = [];
+  if (!DEMO_DATA_ENABLED) return owners;
   for (let minuteIndex = 0; minuteIndex < 1_440; minuteIndex += 1) {
     if (getPricingRule(minuteIndex).pricingType === "auction") continue; // leave auction minutes open
     if ((minuteIndex * 2 + 1) % 5 !== 0) continue; // ~40% of minutes owned, evenly spread
