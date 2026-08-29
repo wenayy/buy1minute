@@ -5,7 +5,7 @@ import { BrandIcon } from "./BrandIcon";
 import { formatPrice } from "../lib/pricing";
 import { allMinutes } from "../lib/seed-data";
 import { minuteIndexFromDate, minuteIndexToSlug } from "../lib/time";
-import type { MinuteState } from "../lib/types";
+import type { MinuteState, OwnedMinute } from "../lib/types";
 
 type Filter = "all" | "available" | "owned";
 
@@ -13,6 +13,7 @@ export function ExploreGrid() {
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
   const [currentMinute, setCurrentMinute] = useState<number | null>(null);
+  const [liveOwners, setLiveOwners] = useState<OwnedMinute[]>([]);
 
   useEffect(() => {
     const tick = () => setCurrentMinute(minuteIndexFromDate(new Date()));
@@ -21,9 +22,19 @@ export function ExploreGrid() {
     return () => window.clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    fetch("/api/live-state").then((response) => response.ok ? response.json() : null)
+      .then((payload: { owners?: OwnedMinute[] } | null) => { if (payload?.owners) setLiveOwners(payload.owners); })
+      .catch(() => undefined);
+  }, []);
+
   const visible = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    return allMinutes.filter((minute) => {
+    const ownerByMinute = new Map(liveOwners.map((owner) => [owner.minuteIndex, owner]));
+    return allMinutes.map((minute) => {
+      const owner = ownerByMinute.get(minute.minuteIndex);
+      return owner ? { ...minute, owner, status: "owned" as const } : minute;
+    }).filter((minute) => {
       if (filter === "available" && minute.status !== "available") return false;
       if (filter === "owned" && minute.status !== "owned") return false;
       if (!normalizedQuery) return true;
@@ -32,7 +43,7 @@ export function ExploreGrid() {
         minute.owner?.product.name.toLowerCase().includes(normalizedQuery)
       );
     });
-  }, [filter, query]);
+  }, [filter, query, liveOwners]);
 
   const hours = Array.from({ length: 24 }, (_, hour) => ({
     hour,

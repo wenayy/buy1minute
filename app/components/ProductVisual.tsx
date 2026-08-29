@@ -10,7 +10,7 @@ export function ProductVisual({ product, compact = false }: { product: Product; 
     >
       <div className="visual-topline">
         <span>{product.name}</span>
-        <span>DEMO / 2026</span>
+        <span>BUY1MINUTE · LIVE</span>
       </div>
       <div className="visual-canvas">
         <span className="visual-orb visual-orb-a" />
