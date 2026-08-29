@@ -10,7 +10,6 @@ export function SiteHeader({ inverse = false }: { inverse?: boolean }) {
         <a href="/explore">Explore</a>
         <a href="/leaderboard">Leaderboard</a>
         <a href="/how-it-works">How it works</a>
-        <a href="/my-minutes">My minutes</a>
       </nav>
     </header>
   );
