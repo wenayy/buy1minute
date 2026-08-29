@@ -18,6 +18,9 @@ function postgresSql(sqlText: string): string {
   let index = 0;
   const isIgnoreInsert = /INSERT\s+OR\s+IGNORE\s+INTO/i.test(sqlText);
   let result = sqlText.replace(/INSERT\s+OR\s+IGNORE\s+INTO/gi, "INSERT INTO");
+  // D1 stores booleans as SQLite integers; Neon stores these columns as booleans.
+  result = result.replace(/\b(active|is_outbid)\s*=\s*1\b/gi, "$1 = TRUE");
+  result = result.replace(/\b(active|is_outbid)\s*=\s*0\b/gi, "$1 = FALSE");
   result = result.replace(/\?/g, () => `$${++index}`);
   if (isIgnoreInsert) result = `${result} ON CONFLICT DO NOTHING`;
   return result;
