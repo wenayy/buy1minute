@@ -166,7 +166,7 @@ function OwnedTakeover({ state, countdown, minuteIndex }: { state: MinuteState; 
 
 // When the live minute is unclaimed, we still feature a brand — the reigning
 // highest bidder — so the homepage is never empty, plus a claim CTA.
-function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState; champion: OwnedMinute; minuteIndex: number }) {
+function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState; champion?: OwnedMinute; minuteIndex: number }) {
   const priceLabel = state.priceCents === null ? "AUCTION" : formatPrice(state.priceCents);
   return (
     <section
@@ -177,26 +177,21 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
       <div className="featured-copy">
         <span className="eyebrow featured-eyebrow">
           <span className="live-badge"><i /></span>
-          <em>{state.time} IS OPEN</em> · REIGNING BID {formatPrice(champion.purchasePriceCents)}
+          <em>{state.time} IS OPEN</em>{champion ? <> · REIGNING BID {formatPrice(champion.purchasePriceCents)}</> : <> · FIRST LISTING</>}
         </span>
-        <div className="owner-heading">
-          <LogoMark product={champion.product} />
-          <h1>{champion.product.name}</h1>
-        </div>
-        <p className="takeover-tagline">{champion.product.tagline}</p>
+        {champion ? <>
+          <div className="owner-heading">
+            <LogoMark product={champion.product} />
+            <h1>{champion.product.name}</h1>
+          </div>
+          <p className="takeover-tagline">{champion.product.tagline}</p>
+        </> : <>
+          <div className="owner-heading"><h1>Your brand here.</h1></div>
+          <p className="takeover-tagline">Be the first product featured on Buy1Minute.</p>
+        </>}
         <div className="featured-actions">
-          <a
-            className="primary-link"
-            href={champion.product.websiteUrl}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            onClick={() => sendEvent("outbound_click", champion.minuteIndex)}
-          >
-            Visit <span>↗</span>
-          </a>
-          <a className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>
-            Outbid the champion →
-          </a>
+          {champion && <><a className="primary-link" href={champion.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => sendEvent("outbound_click", champion.minuteIndex)}>Visit <span>↗</span></a>
+          <a className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>Outbid the champion →</a></>}
         </div>
       </div>
       <aside className="claim-block featured-claim">
