@@ -51,7 +51,7 @@ export default async function MinutePage({ params }: PageProps) {
             <p className="takeover-tagline">{minute.owner.product.tagline}</p>
             <p className="takeover-description">{minute.owner.product.description}</p>
             <a className="primary-link" href={minute.owner.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored">
-              Visit {minute.owner.product.name} <span>↗</span>
+              Visit <span>↗</span>
             </a>
             <Link className="text-link minute-outbid-link" href={`/buy/${slug}?outbid=${minute.owner.purchasePriceCents}`}>
               Outbid for {formatPrice(minute.owner.purchasePriceCents + 100)} →

@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LogoMark } from "./LogoMark";
 import { ProductVisual } from "./ProductVisual";
 import { SiteHeader } from "./SiteHeader";
-import { displayHost } from "../lib/favicon";
 import { formatPrice } from "../lib/pricing";
 import { getMinuteState, seededOwnerships } from "../lib/seed-data";
 import {
@@ -149,7 +148,6 @@ function OwnedTakeover({ state, countdown, minuteIndex }: { state: MinuteState; 
 // When the live minute is unclaimed, we still feature a brand — the reigning
 // highest bidder — so the homepage is never empty, plus a claim CTA.
 function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState; champion: OwnedMinute; minuteIndex: number }) {
-  const host = displayHost(champion.product.websiteUrl);
   const priceLabel = state.priceCents === null ? "AUCTION" : formatPrice(state.priceCents);
   return (
     <section
@@ -175,7 +173,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
             rel="noopener noreferrer sponsored"
             onClick={() => sendEvent("outbound_click", champion.minuteIndex)}
           >
-            Visit {host || "site"} <span>↗</span>
+            Visit <span>↗</span>
           </a>
           <Link className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>
             Outbid the champion →
@@ -249,12 +247,11 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
     <section className="home-leaderboard" aria-label="Minutes ranked by highest bid">
       <div className="home-lb-heading">
         <span>THE LEADERBOARD · HIGHEST BIDS OWN THE MINUTE</span>
-        <Link href="/leaderboard">See the full ranking →</Link>
+        <Link href="/leaderboard">See the full leaderboard →</Link>
       </div>
       <ol className="home-lb-list">
         {ranked.map((owner, index) => {
           const isLive = owner.minuteIndex === minuteIndex;
-          const host = displayHost(owner.product.websiteUrl);
           return (
             <li
               key={owner.minuteIndex}
@@ -285,7 +282,7 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
                   rel="noopener noreferrer sponsored"
                   onClick={() => sendEvent("outbound_click", owner.minuteIndex)}
                 >
-                  Visit {host || "site"} ↗
+                  Visit ↗
                 </a>
                 <Link
                   className="home-lb-outbid"
@@ -298,6 +295,9 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
           );
         })}
       </ol>
+      <div className="home-lb-footer">
+        <Link className="text-link" href="/leaderboard">See the full leaderboard →</Link>
+      </div>
     </section>
   );
 }
