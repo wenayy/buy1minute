@@ -40,7 +40,7 @@ export function createNeonD1(connectionString: string) {
     return {
       bind(...bound: unknown[]) {
         const normalized = /\bis_outbid\b/i.test(text)
-          ? bound.map((value, index) => (index === 3 && (value === 0 || value === 1) ? Boolean(value) : value))
+          ? bound.map((value, index) => (index === 4 && (value === 0 || value === 1) ? Boolean(value) : value))
           : bound;
         return statement(text, normalized);
       },
