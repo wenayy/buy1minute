@@ -457,3 +457,23 @@
 .home-lb-brand{gap:10px}
 .home-lb-brand strong{font-size:.94rem}
 .home-lb-brand small{font-size:.48rem}
+.home-lb-row{grid-template-columns:42px 1fr 110px 70px auto}
+.home-lb-clicks{display:flex;flex-direction:column;gap:2px;justify-content:center}
+.home-lb-clicks strong{font-size:.72rem}
+.home-lb-clicks small{font-size:.43rem}
+.leaderboard-empty{min-height:230px;display:flex;flex-direction:column;justify-content:center;gap:8px;border:1px solid var(--line);padding:28px;color:var(--muted)}
+.leaderboard-empty strong{color:var(--ink);font-size:1.15rem}
+@media(max-width:760px){
+  .home-lb-row{grid-template-columns:34px 1fr auto}
+  .home-lb-clicks{grid-column:2;grid-row:2;flex-direction:row;align-items:center;gap:5px;justify-content:flex-start}
+  .home-lb-clicks small{font-size:.42rem}
+  .lb-card{grid-template-columns:1fr;gap:0;padding:16px 14px 52px 108px;min-height:170px}
+  .lb-rank{position:absolute;left:14px;top:18px;min-width:62px}
+  .lb-logo{position:absolute;left:14px;top:58px;width:76px!important;height:76px!important}
+  .lb-main{width:100%}
+  .lb-headline{font-size:1rem;line-height:1.18;overflow-wrap:anywhere}
+  .lb-meta{gap:7px;margin-top:10px;font-size:.56rem;line-height:1.5}
+  .lb-right{grid-column:1;display:flex;flex-direction:row;align-items:baseline;justify-content:space-between;margin-top:14px;text-align:left}
+  .lb-price{font-size:1.7rem}
+  .lb-claim-pill{left:14px;right:14px;bottom:10px}
+}
