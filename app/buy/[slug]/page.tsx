@@ -4,6 +4,7 @@ import { BuyConfigurator } from "../../components/BuyConfigurator";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { getMinuteState } from "../../lib/seed-data";
+import { databaseBinding, getDatabaseMinute } from "../../lib/live-db";
 import { parseMinuteSlug } from "../../lib/time";
 
 export const metadata: Metadata = { title: "Claim your minute" };
@@ -15,9 +16,12 @@ export default async function BuyPage({ params, searchParams }: PageProps) {
   const index = parseMinuteSlug(slug);
   if (index === null) notFound();
   const minute = getMinuteState(index);
-  const wantsOutbid = outbid !== undefined && minute.status === "owned";
-  if (minute.status === "owned" && !wantsOutbid) redirect(`/minute/${slug}`);
-  const currentBidCents = wantsOutbid ? minute.owner?.purchasePriceCents ?? null : null;
+  const live = await getDatabaseMinute(databaseBinding(), index);
+  const owner = live?.owner ?? minute.owner;
+  const isOwned = Boolean(owner || live?.bidCents);
+  const wantsOutbid = outbid !== undefined && isOwned;
+  if (isOwned && !wantsOutbid) redirect(`/minute/${slug}`);
+  const currentBidCents = wantsOutbid ? live?.bidCents ?? owner?.purchasePriceCents ?? null : null;
   return (
     <main className="page-shell buy-page">
       <SiteHeader />

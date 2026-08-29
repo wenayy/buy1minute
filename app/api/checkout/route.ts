@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { dodoCheckoutBase, getOrCreateDynamicProduct } from "../../lib/dodo";
 import { getCheckoutTotal } from "../../lib/pricing";
 import { ownershipByMinute } from "../../lib/seed-data";
+import { getDatabaseMinute } from "../../lib/live-db";
 import { minuteIndexToSlug, minuteIndexToTime } from "../../lib/time";
 
 function validSingleMinuteSelection(value: unknown): value is [number] {
@@ -13,16 +14,17 @@ function validSingleMinuteSelection(value: unknown): value is [number] {
 type CheckoutPlan = { minuteIndices: number[]; totalCents: number; isOutbid: boolean };
 
 /** Resolve the request into a validated set of minutes and a total (in cents). */
-function planCheckout(body: { minuteIndices?: unknown; minuteIndex?: unknown; bidCents?: unknown }): CheckoutPlan | Response {
+async function planCheckout(body: { minuteIndices?: unknown; minuteIndex?: unknown; bidCents?: unknown }, database: D1Database | undefined): Promise<CheckoutPlan | Response> {
   // Outbid flow: a single custom bid that must beat the current winning bid.
   if (body.minuteIndex !== undefined || body.bidCents !== undefined) {
     const { minuteIndex, bidCents } = body;
     if (!Number.isInteger(minuteIndex) || (minuteIndex as number) < 0 || (minuteIndex as number) >= 1_440) {
       return Response.json({ error: "Invalid minute" }, { status: 400 });
     }
-    const owner = ownershipByMinute.get(minuteIndex as number);
-    if (!owner) return Response.json({ error: "This minute is not owned, so there is nothing to outbid" }, { status: 409 });
-    if (!Number.isInteger(bidCents) || (bidCents as number) <= owner.purchasePriceCents) {
+    const live = await getDatabaseMinute(database, minuteIndex as number);
+    const currentBidCents = live?.bidCents ?? ownershipByMinute.get(minuteIndex as number)?.purchasePriceCents;
+    if (currentBidCents === undefined) return Response.json({ error: "This minute is not owned, so there is nothing to outbid" }, { status: 409 });
+    if (!Number.isInteger(bidCents) || (bidCents as number) <= currentBidCents) {
       return Response.json({ error: "Your bid must be higher than the current winning bid" }, { status: 400 });
     }
     return { minuteIndices: [minuteIndex as number], totalCents: bidCents as number, isOutbid: true };
@@ -45,7 +47,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const plan = planCheckout(body);
+  const database = env.DB;
+  const plan = await planCheckout(body, database);
   if (plan instanceof Response) return plan;
   const { minuteIndices, totalCents } = plan;
 
@@ -62,7 +65,6 @@ export async function POST(request: Request) {
   }
 
   // Reserve the minute for 10 minutes while the buyer completes payment.
-  const database = env.DB;
   if (!database) return Response.json({ error: "Reservation service is unavailable" }, { status: 503 });
 
   const environment = env.DODO_PAYMENTS_ENVIRONMENT === "live" ? "live" : "test";
