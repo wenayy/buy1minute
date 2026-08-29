@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
 import { displayHost } from "../lib/favicon";
@@ -63,9 +62,9 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
               key={owner.minuteIndex}
               className={`lb-card ${index === 0 ? "lb-card-top" : ""}`}
             >
-              <Link className="lb-claim-pill" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
+              <a className="lb-claim-pill" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
                 claim this rank for {formatPrice(claimCents)}
-              </Link>
+              </a>
               <span className="lb-rank">#{index + 1}</span>
               <BrandIcon websiteUrl={product.websiteUrl} fallback={product.shortName} size={128} className="lb-logo" imgClassName="lb-logo-img" />
               <div className="lb-main">
@@ -78,7 +77,7 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
                   <span>{timeAgo(owner.ownedSince)}</span>
                   <a href={product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored" className="lb-domain">{host}</a>
                   <span>{owner.outboundClicks.toLocaleString()} clicks</span>
-                  <Link href={`/minute/${slug}`} className="lb-details">see details</Link>
+                  <a href={`/minute/${slug}`} className="lb-details">see details</a>
                 </div>
               </div>
               <div className="lb-right">

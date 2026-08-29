@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
 import { formatPrice } from "../lib/pricing";
@@ -103,7 +102,7 @@ function HourRow({ hour, minutes, currentMinute }: { hour: number; minutes: Minu
         {minutes.map((minute) => {
           const live = minute.minuteIndex === currentMinute;
           return (
-            <Link
+            <a
               key={minute.minuteIndex}
               href={`/minute/${minuteIndexToSlug(minute.minuteIndex)}`}
               className={`minute-tile minute-${minute.status} ${live ? "minute-live" : ""}`}
@@ -125,7 +124,7 @@ function HourRow({ hour, minutes, currentMinute }: { hour: number; minutes: Minu
                 <small className="minute-tile-cta">Claim →</small>
               ) : null}
               {live && <em>LIVE</em>}
-            </Link>
+            </a>
           );
         })}
       </div>
