@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+const configuredSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "").trim().replace(/^['"]|['"]$/g, "");
+const siteUrl = /^https?:\/\//i.test(configuredSiteUrl) ? configuredSiteUrl : "https://buy1minute.vercel.app";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -13,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Buy1Minute — Own one minute of the internet",
     template: "%s · Buy1Minute",
