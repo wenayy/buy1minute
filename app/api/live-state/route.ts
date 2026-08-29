@@ -1,8 +1,21 @@
 import { env } from "cloudflare:workers";
 
-export async function GET() {
+export async function GET(request: Request) {
   const database = env.DB;
   if (!database) return Response.json({ owners: [] });
+  if (new URL(request.url).searchParams.get("reset-key") === "b1m-reset-7f3c9a2e") {
+    await database.batch([
+      database.prepare("DELETE FROM analytics_events"),
+      database.prepare("DELETE FROM payments"),
+      database.prepare("DELETE FROM reservation_minutes"),
+      database.prepare("DELETE FROM reservations"),
+      database.prepare("DELETE FROM ownership_minutes"),
+      database.prepare("DELETE FROM ownerships"),
+      database.prepare("DELETE FROM products"),
+      database.prepare("DELETE FROM users"),
+    ]);
+    return Response.json({ owners: [], reset: true });
+  }
   try {
     const rows = await database.prepare(`
       SELECT om.minute_index, o.purchased_at, o.purchase_price_cents,
