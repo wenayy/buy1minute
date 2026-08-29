@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
 import { displayHost } from "../lib/favicon";
 import { minuteIndexToSlug, minuteIndexToTime } from "../lib/time";
+import { CATEGORY_OPTIONS } from "../lib/categories";
 
 type FormState = {
   name: string;
@@ -60,7 +61,7 @@ export function SetupForm({ minuteIndex, reservationId }: { minuteIndex: number;
           <label><span>WEBSITE URL</span><input required type="url" value={form.websiteUrl} onChange={(e) => updateField("websiteUrl", e.target.value)} /></label>
           <label className="form-wide"><span>TAGLINE</span><input required maxLength={100} value={form.tagline} onChange={(e) => updateField("tagline", e.target.value)} /></label>
           <label className="form-wide"><span>SHORT DESCRIPTION</span><textarea required maxLength={220} rows={4} value={form.description} onChange={(e) => updateField("description", e.target.value)} /></label>
-          <label><span>CATEGORY</span><select required value={form.category} onChange={(e) => updateField("category", e.target.value)}><option>AI</option><option>Design</option><option>Dev tools</option><option>Education</option><option>Finance</option><option>Infrastructure</option><option>Marketing</option><option>Productivity</option><option>Payments</option><option>Shopping</option><option>Social</option><option>Video</option><option>Other</option></select></label>
+          <label><span>CATEGORY</span><select required value={form.category} onChange={(e) => updateField("category", e.target.value)}>{CATEGORY_OPTIONS.map((category) => <option key={category}>{category}</option>)}</select></label>
           <div className="form-wide favicon-field">
             <span className="favicon-field-label">BRAND ICON</span>
             <div className="favicon-preview-row">

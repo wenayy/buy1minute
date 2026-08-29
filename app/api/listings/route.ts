@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { CATEGORY_OPTIONS } from "../../lib/categories";
 
 function clean(value: unknown, max: number): string {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -17,9 +18,10 @@ export async function POST(request: Request) {
   const websiteUrl = clean(body?.websiteUrl, 300);
   const tagline = clean(body?.tagline, 100);
   const description = clean(body?.description, 220);
-  const category = clean(body?.category, 40) || "Other";
+  const category = clean(body?.category, 40);
   const socialHandle = clean(body?.xHandle, 80) || null;
-  if (!reservationId || !name || !websiteUrl || !tagline || !description) return Response.json({ error: "Complete every required field" }, { status: 400 });
+  if (!reservationId || !name || !websiteUrl || !tagline || !description || !category) return Response.json({ error: "Complete every required field" }, { status: 400 });
+  if (!(CATEGORY_OPTIONS as readonly string[]).includes(category)) return Response.json({ error: "Choose a valid category" }, { status: 400 });
   try { new URL(websiteUrl); } catch { return Response.json({ error: "Enter a valid website URL" }, { status: 400 }); }
 
   const database = env.DB;

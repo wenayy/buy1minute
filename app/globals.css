@@ -444,3 +444,12 @@
   .featured-takeover::after{inset:6px}
 }
 @media(prefers-reduced-motion:reduce){.featured-takeover::after,.featured-claim{animation:none}}
+
+/* Extra-tight leaderboard density: keep the ranking scannable without oversized cards. */
+.lb-card{min-height:72px;padding-top:7px;padding-bottom:7px}
+.lb-logo{width:56px!important;height:56px!important}
+.lb-desc{display:none}
+.home-lb-row{min-height:52px;padding-top:4px;padding-bottom:4px}
+.home-lb-brand{gap:10px}
+.home-lb-brand strong{font-size:.94rem}
+.home-lb-brand small{font-size:.48rem}

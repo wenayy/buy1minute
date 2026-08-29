@@ -6,6 +6,7 @@ import { displayHost } from "../lib/favicon";
 import { formatPrice } from "../lib/pricing";
 import { minuteIndexToSlug, minuteIndexToTime, timeAgo } from "../lib/time";
 import type { OwnedMinute } from "../lib/types";
+import { CATEGORY_OPTIONS } from "../lib/categories";
 
 type SortKey = "bid" | "clicks" | "newest";
 
@@ -32,7 +33,7 @@ const CATEGORY_ICON: Record<string, string> = {
 export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
   const [sort, setSort] = useState<SortKey>("bid");
   const [category, setCategory] = useState("ALL");
-  const categories = useMemo(() => Array.from(new Set(owners.map((owner) => owner.product.category).filter(Boolean))).sort(), [owners]);
+  const categories = CATEGORY_OPTIONS;
   const ranked = useMemo(
     () => owners.filter((owner) => category === "ALL" || owner.product.category === category).sort(comparators[sort]),
     [owners, sort, category],
