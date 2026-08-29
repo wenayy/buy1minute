@@ -5,7 +5,7 @@ import { BrandIcon } from "../../components/BrandIcon";
 import { LogoMark } from "../../components/LogoMark";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
-import { displayHost, readableTextColor } from "../../lib/favicon";
+import { displayHost } from "../../lib/favicon";
 import { formatPrice } from "../../lib/pricing";
 import { getMinuteState } from "../../lib/seed-data";
 import { minuteIndexToSlug, minuteIndexToTime, parseMinuteSlug } from "../../lib/time";
@@ -37,7 +37,7 @@ export default async function MinutePage({ params }: PageProps) {
     <main className="page-shell minute-page">
       <SiteHeader />
       {minute.owner ? (
-        <section className="minute-detail-owned" style={{ "--takeover-accent": minute.owner.product.accentColor } as React.CSSProperties}>
+        <section className="minute-detail-owned">
           <div className="minute-title">
             <span className="eyebrow">A PERMANENT MINUTE</span>
             <strong>{minute.time}</strong>
@@ -62,7 +62,6 @@ export default async function MinutePage({ params }: PageProps) {
             href={minute.owner.product.websiteUrl}
             target="_blank"
             rel="noopener noreferrer sponsored"
-            style={{ "--card-accent": minute.owner.product.accentColor, "--card-ink": readableTextColor(minute.owner.product.accentColor) } as React.CSSProperties}
           >
             <span className="minute-brand-top">{minute.owner.product.category ?? "FEATURED"}<span>↗</span></span>
             <BrandIcon websiteUrl={minute.owner.product.websiteUrl} fallback={minute.owner.product.shortName} size={256} className="minute-brand-icon" imgClassName="minute-brand-icon-img" />
@@ -100,4 +99,3 @@ export default async function MinutePage({ params }: PageProps) {
     </main>
   );
 }
-

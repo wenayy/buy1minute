@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
-import { colorFromString, displayHost, readableTextColor } from "../lib/favicon";
+import { displayHost, readableTextColor } from "../lib/favicon";
 import { minuteIndexToTime } from "../lib/time";
 
 type FormState = {
@@ -32,63 +32,16 @@ function safeHex(value: string): string {
 
 export function SetupForm({ minuteIndex }: { minuteIndex: number }) {
   const [form, setForm] = useState(initialForm);
-  const [accentSource, setAccentSource] = useState<"detecting" | "site" | "generated" | "manual">("generated");
   const [published, setPublished] = useState(false);
-  // Once the user picks a color by hand, stop auto-overriding it.
-  const userPicked = useRef(false);
   const initials = useMemo(() => form.name.split(/\s+/).map((word) => word[0]).join("").slice(0, 2).toUpperCase() || "YM", [form.name]);
   const host = useMemo(() => displayHost(form.websiteUrl), [form.websiteUrl]);
   const accent = safeHex(form.accentColor);
-
-  // Auto-detect a starting accent from the site (theme-color, else generated),
-  // but always let the user override it with the picker below.
-  useEffect(() => {
-    // Keep the pleasant default until a real site is entered.
-    if (!host || host === "example.com" || userPicked.current) return;
-    let cancelled = false;
-    setAccentSource("detecting");
-    const timer = setTimeout(async () => {
-      if (!cancelled && !userPicked.current) {
-        setForm((current) => ({ ...current, accentColor: colorFromString(host) }));
-        setAccentSource("generated");
-      }
-      try {
-        const response = await fetch(`/api/brand-color?url=${encodeURIComponent(form.websiteUrl)}`);
-        const data = (await response.json()) as { color?: string | null };
-        if (!cancelled && !userPicked.current && data.color) {
-          setForm((current) => ({ ...current, accentColor: data.color as string }));
-          setAccentSource("site");
-        }
-      } catch {
-        /* keep generated color */
-      }
-    }, 500);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [host, form.websiteUrl]);
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
-  function pickColor(value: string) {
-    userPicked.current = true;
-    setAccentSource("manual");
-    // Always keep a clean "#" + up to 6 hex chars — no malformed values.
-    const cleaned = `#${value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6)}`;
-    setForm((current) => ({ ...current, accentColor: cleaned }));
-  }
-
-  const note =
-    accentSource === "detecting"
-      ? "Reading your site’s icon and theme color…"
-      : accentSource === "manual"
-        ? "Custom color. Your icon is still pulled from your site."
-        : accentSource === "site"
-          ? `Icon and color detected from ${host}. Adjust the color anytime.`
-          : `Icon from ${host || "your site"}; color generated. Adjust it anytime.`;
+  const note = `Logo from ${host || "your site"}. Every listing uses the same Buy1Minute theme.`;
 
   return (
     <div className="setup-layout">
@@ -107,20 +60,16 @@ export function SetupForm({ minuteIndex }: { minuteIndex: number }) {
           <label className="form-wide"><span>TAGLINE</span><input required maxLength={100} value={form.tagline} onChange={(e) => updateField("tagline", e.target.value)} /></label>
           <label className="form-wide"><span>SHORT DESCRIPTION</span><textarea required maxLength={220} rows={4} value={form.description} onChange={(e) => updateField("description", e.target.value)} /></label>
           <div className="form-wide favicon-field">
-            <span className="favicon-field-label">BRAND ICON &amp; COLOR</span>
+            <span className="favicon-field-label">BRAND ICON</span>
             <div className="favicon-preview-row">
               <BrandIcon websiteUrl={form.websiteUrl} fallback={initials} size={128} className="favicon-chip" imgClassName="favicon-chip-img" />
-              <div className="color-input accent-picker">
-                <input type="color" value={accent} onChange={(e) => pickColor(e.target.value)} aria-label="Pick accent color" />
-                <input value={form.accentColor} maxLength={7} pattern="^#[0-9A-Fa-f]{6}$" onChange={(e) => pickColor(e.target.value)} aria-label="Accent color hex" />
-              </div>
               <small>{note}</small>
             </div>
           </div>
           <label><span>X HANDLE · OPTIONAL</span><input placeholder="@yourproduct" value={form.xHandle} onChange={(e) => updateField("xHandle", e.target.value)} /></label>
         </div>
         <button className="primary-button" type="submit">PUBLISH MY MINUTE →</button>
-        <small>Your icon is detected from your website; pick any accent color you like.</small>
+        <small>Your logo is detected from your website. The Buy1Minute visual theme stays consistent for every product.</small>
         {published && <div className="success-note">Preview saved. Connect production storage to publish this listing publicly.</div>}
       </form>
       <section className="brand-preview" style={{ "--preview-accent": accent, "--preview-ink": readableTextColor(accent) } as React.CSSProperties}>

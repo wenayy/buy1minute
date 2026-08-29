@@ -13,15 +13,15 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
   // One minute per purchase (multi-minute blocks come later).
   const price = getCheckoutTotal([startIndex]);
 
-  // Custom bids support exact dollars and cents and must beat the winner by 1¢.
-  const minBidCents = isOutbid ? (currentBidCents ?? 0) + 1 : 0;
-  const [bidDollars, setBidDollars] = useState<string>(isOutbid ? (minBidCents / 100).toFixed(2) : "");
+  // Bids are whole dollars and must beat the winner by exactly at least $1.
+  const minBidCents = isOutbid ? (currentBidCents ?? 0) + 100 : 0;
+  const [bidDollars, setBidDollars] = useState<string>(isOutbid ? String(minBidCents / 100) : "");
   const bidCents = parseDollarAmountToCents(bidDollars);
   const bidValid = isOutbid && bidCents !== null && bidCents >= minBidCents;
 
   function nudgeBid(deltaCents: number) {
     const next = Math.max(minBidCents, (bidCents ?? minBidCents) + deltaCents);
-    setBidDollars((next / 100).toFixed(2));
+    setBidDollars(String(next / 100));
   }
 
   async function beginCheckout() {
@@ -77,11 +77,11 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
               <i>$</i>
               <input
                 type="text"
-                inputMode="decimal"
+                inputMode="numeric"
                 value={bidDollars}
                 onChange={(e) => {
-                  const next = e.target.value.replace(/[^\d.]/g, "");
-                  if (/^\d*(?:\.\d{0,2})?$/.test(next)) setBidDollars(next);
+                  const next = e.target.value.replace(/[^\d]/g, "");
+                  setBidDollars(next);
                 }}
               />
               <div className="bid-nudge">
@@ -89,7 +89,7 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
                 <button type="button" onClick={() => nudgeBid(-100)} aria-label="Decrease bid by one dollar">▼</button>
               </div>
             </div>
-            {!bidValid && bidDollars !== "" && <small className="form-error">Enter at least {formatPrice(minBidCents)} (up to 2 decimal places).</small>}
+            {!bidValid && bidDollars !== "" && <small className="form-error">Enter at least {formatPrice(minBidCents)} (whole dollars).</small>}
           </label>
         ) : (
           <div className="checkout-total">

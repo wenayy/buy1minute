@@ -41,7 +41,7 @@ export default function MyMinutesPage() {
           const slug = minuteIndexToSlug(row.owner.minuteIndex);
           const host = displayHost(row.owner.product.websiteUrl);
           return (
-            <article key={row.owner.minuteIndex} className={`bid-card bid-card-${row.status}`} style={{ "--card-accent": row.owner.product.accentColor } as React.CSSProperties}>
+            <article key={row.owner.minuteIndex} className={`bid-card bid-card-${row.status}`}>
               <div className="bid-card-time"><strong>{minuteIndexToTime(row.owner.minuteIndex)}</strong><span>UTC · daily</span></div>
               <div className="bid-card-brand">
                 <LogoMark product={row.owner.product} small />

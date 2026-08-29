@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
-import { displayHost, readableTextColor } from "../lib/favicon";
+import { displayHost } from "../lib/favicon";
 import { formatPrice } from "../lib/pricing";
 import { minuteIndexToSlug, minuteIndexToTime, timeAgo } from "../lib/time";
 import type { OwnedMinute } from "../lib/types";
@@ -62,7 +62,6 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
             <li
               key={owner.minuteIndex}
               className={`lb-card ${index === 0 ? "lb-card-top" : ""}`}
-              style={{ "--row-accent": product.accentColor, "--row-ink": readableTextColor(product.accentColor) } as React.CSSProperties}
             >
               <Link className="lb-claim-pill" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
                 claim this rank for {formatPrice(claimCents)}

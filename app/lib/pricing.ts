@@ -40,15 +40,14 @@ export function formatPrice(amountCents: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: amountCents % 100 === 0 ? 0 : 2,
-  }).format(amountCents / 100);
+    maximumFractionDigits: 0,
+  }).format(Math.round(amountCents / 100));
 }
 
-/** Convert a user-entered USD amount to cents without floating-point rounding. */
+/** Convert a whole-dollar bid to cents without floating-point rounding. */
 export function parseDollarAmountToCents(value: string): number | null {
   const normalized = value.trim();
-  if (!/^\d+(?:\.\d{0,2})?$/.test(normalized)) return null;
-  const [dollars, fractional = ""] = normalized.split(".");
-  const cents = Number(dollars) * 100 + Number(fractional.padEnd(2, "0"));
+  if (!/^\d+$/.test(normalized)) return null;
+  const cents = Number(normalized) * 100;
   return Number.isSafeInteger(cents) ? cents : null;
 }

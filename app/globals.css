@@ -366,3 +366,18 @@
 .owned-takeover .owner-heading{min-width:0;width:100%}
 .owned-takeover .owner-heading h1{min-width:0;max-width:100%;font-size:clamp(3rem,15cqw,7rem);overflow-wrap:anywhere}
 .owned-takeover .owner-cta:hover{background:#0a0a09;color:#fff;border-color:#0a0a09}
+
+/* One shared product theme: logos, names and copy vary; surfaces and accents do not. */
+.product-visual-fixed{--accent:#ff4e24!important}
+.product-visual-fixed .visual-canvas{background-color:#0d0d0c}
+.product-visual-fixed .visual-brand-icon{z-index:4;width:clamp(78px,12vw,150px);height:clamp(78px,12vw,150px);border:1px solid #f4f1e9;border-radius:22px;background:#fff;overflow:hidden}
+.product-visual-fixed .visual-brand-icon-img{width:100%;height:100%;padding:16px;object-fit:contain}
+.product-visual-fixed .visual-canvas strong{position:absolute;bottom:16%;z-index:5;font-size:clamp(1rem,2vw,1.8rem);letter-spacing:-.04em;color:#f4f1e9!important;text-shadow:none!important;mix-blend-mode:normal}
+.bid-card{--card-accent:var(--signal);border-left-color:var(--signal)}
+.lb-card,.home-lb-row,.upcoming-card{--row-accent:var(--signal);--row-ink:#0a0a09;--card-accent:var(--signal)}
+.lb-card-top{border-color:color-mix(in srgb,var(--signal) 60%,var(--line));background:color-mix(in srgb,var(--signal) 9%,transparent)}
+.lb-card:hover,.home-lb-top .home-lb-rank{border-color:var(--signal);color:var(--signal)}
+.minute-brand-card{--card-accent:#f0ede4!important;--card-ink:#0a0a09!important;background:#f0ede4!important;color:#0a0a09!important}
+.minute-brand-card:hover{box-shadow:0 24px 70px -24px rgba(10,10,9,.28)}
+.minute-brand-icon .brand-icon-fallback{color:#ff4e24}
+.minute-owned{--tile-accent:var(--signal)}

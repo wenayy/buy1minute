@@ -6,10 +6,10 @@ import { parseDollarAmountToCents } from "../app/lib/pricing.ts";
 
 test("parses exact custom checkout amounts in cents", () => {
   assert.equal(parseDollarAmountToCents("99"), 9_900);
-  assert.equal(parseDollarAmountToCents("99.9"), 9_990);
-  assert.equal(parseDollarAmountToCents("99.95"), 9_995);
-  assert.equal(parseDollarAmountToCents("0.01"), 1);
-  assert.equal(parseDollarAmountToCents("99.999"), null);
+  assert.equal(parseDollarAmountToCents("99.9"), null);
+  assert.equal(parseDollarAmountToCents("99.95"), null);
+  assert.equal(parseDollarAmountToCents("0.01"), null);
+  assert.equal(parseDollarAmountToCents("999"), 99_900);
   assert.equal(parseDollarAmountToCents("$99"), null);
 });
 

@@ -107,7 +107,6 @@ function HourRow({ hour, minutes, currentMinute }: { hour: number; minutes: Minu
               key={minute.minuteIndex}
               href={`/minute/${minuteIndexToSlug(minute.minuteIndex)}`}
               className={`minute-tile minute-${minute.status} ${live ? "minute-live" : ""}`}
-              style={minute.owner ? ({ "--tile-accent": minute.owner.product.accentColor } as React.CSSProperties) : undefined}
             >
               <span className="minute-tile-top">
                 {minute.time}
@@ -133,4 +132,3 @@ function HourRow({ hour, minutes, currentMinute }: { hour: number; minutes: Minu
     </section>
   );
 }
-

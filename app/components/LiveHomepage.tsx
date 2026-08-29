@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LogoMark } from "./LogoMark";
 import { ProductVisual } from "./ProductVisual";
 import { SiteHeader } from "./SiteHeader";
-import { displayHost, readableTextColor } from "../lib/favicon";
+import { displayHost } from "../lib/favicon";
 import { formatPrice } from "../lib/pricing";
 import { getMinuteState, seededOwnerships } from "../lib/seed-data";
 import {
@@ -74,7 +74,7 @@ export function LiveHomepage() {
   return (
     <main
       className={`live-home ${current.owner ? "live-owned" : "live-available"} ${transitioning ? "is-transitioning" : ""}`}
-      style={current.owner ? ({ "--takeover-accent": current.owner.product.accentColor, "--takeover-ink": readableTextColor(current.owner.product.accentColor) } as React.CSSProperties) : undefined}
+      style={current.owner ? ({ "--takeover-accent": "#f0ede4", "--takeover-ink": "#0a0a09" } as React.CSSProperties) : undefined}
     >
       <SiteHeader inverse={Boolean(current.owner)} />
       <div className="live-frame" key={minuteIndex}>
@@ -155,7 +155,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
     <section
       className="takeover featured-takeover"
       aria-live="polite"
-      style={{ "--champ-accent": champion.product.accentColor } as React.CSSProperties}
+      style={{ "--champ-accent": "#ff4e24" } as React.CSSProperties}
     >
       <div className="featured-copy">
         <span className="eyebrow featured-eyebrow">
@@ -218,7 +218,7 @@ function UpcomingMinutes({ minuteIndex }: { minuteIndex: number }) {
               key={minute.minuteIndex}
               href={href}
               className={`upcoming-card ${owner ? "upcoming-owned" : "upcoming-open"}`}
-              style={owner ? ({ "--card-accent": owner.product.accentColor } as React.CSSProperties) : undefined}
+              style={owner ? ({ "--card-accent": "#ff4e24" } as React.CSSProperties) : undefined}
             >
               <span className="upcoming-time">{minuteIndexToTime(minute.minuteIndex)}</span>
               {owner ? (
@@ -259,7 +259,7 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
             <li
               key={owner.minuteIndex}
               className={`home-lb-row ${isLive ? "home-lb-live" : ""} ${index === 0 ? "home-lb-top" : ""}`}
-              style={index === 0 ? ({ "--row-accent": owner.product.accentColor } as React.CSSProperties) : undefined}
+              style={index === 0 ? ({ "--row-accent": "#ff4e24" } as React.CSSProperties) : undefined}
             >
               <span className="home-lb-rank">{(index + 1).toString().padStart(2, "0")}</span>
               <Link href={`/minute/${minuteIndexToSlug(owner.minuteIndex)}`} className="home-lb-brand">
