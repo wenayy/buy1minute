@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatPrice, getCheckoutTotal, parseDollarAmountToCents } from "../lib/pricing";
+import { formatPrice, parseDollarAmountToCents } from "../lib/pricing";
 import { minuteIndexToSlug, minuteIndexToTime } from "../lib/time";
 
 export function BuyConfigurator({ startIndex, currentBidCents = null }: { startIndex: number; currentBidCents?: number | null }) {
@@ -10,13 +10,12 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
   const [checkoutError, setCheckoutError] = useState("");
 
   // One minute per purchase (multi-minute blocks come later).
-  const price = getCheckoutTotal([startIndex]);
-
-  // Bids are whole dollars and must beat the winner by exactly at least $1.
-  const minBidCents = isOutbid ? Math.max(100, (currentBidCents ?? 0) + 100) : 0;
-  const [bidDollars, setBidDollars] = useState<string>(isOutbid ? String(minBidCents / 100) : "");
+  // Every checkout has an editable whole-dollar amount. For an owned minute,
+  // the minimum is exactly $1 above the winning bid; open minutes start at $1.
+  const minBidCents = isOutbid ? Math.max(100, (currentBidCents ?? 0) + 100) : 100;
+  const [bidDollars, setBidDollars] = useState<string>(String(minBidCents / 100));
   const bidCents = parseDollarAmountToCents(bidDollars);
-  const bidValid = isOutbid && bidCents !== null && bidCents >= minBidCents;
+  const bidValid = bidCents !== null && bidCents >= minBidCents && bidCents % 100 === 0;
 
   function nudgeBid(deltaCents: number) {
     const next = Math.max(minBidCents, (bidCents ?? minBidCents) + deltaCents);
@@ -27,7 +26,7 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
     setCheckoutState("loading");
     setCheckoutError("");
     try {
-      const body = isOutbid ? { minuteIndex: startIndex, bidCents: bidCents ?? 0 } : { minuteIndices: [startIndex] };
+      const body = { minuteIndex: startIndex, bidCents: bidCents ?? 0 };
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -69,9 +68,8 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
           <p>✓ Public ownership badge</p>
           <p>✓ Privacy-respecting analytics</p>
         </div>
-        {isOutbid ? (
-          <label className="bid-input">
-            <span>YOUR PRICE · MIN {formatPrice(minBidCents)}</span>
+        <label className="bid-input">
+            <span>{isOutbid ? "YOUR OUTBID · MIN" : "YOUR PRICE · MIN"} {formatPrice(minBidCents)}</span>
             <div className="bid-field">
               <button className="bid-step" type="button" onClick={() => nudgeBid(-100)} aria-label="Decrease bid by one dollar">−</button>
               <i>$</i>
@@ -86,20 +84,13 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
               />
               <button className="bid-step" type="button" onClick={() => nudgeBid(100)} aria-label="Increase bid by one dollar">+</button>
             </div>
-            <small className="bid-hint">Whole dollars only · adjust by $1</small>
-            {!bidValid && bidDollars !== "" && <small className="form-error">Enter at least {formatPrice(minBidCents)} (whole dollars).</small>}
-          </label>
-        ) : (
-          <div className="checkout-total">
-            <span>TOTAL</span>
-            <strong>{price === null ? "AUCTION" : formatPrice(price)}</strong>
-            <small>One-time payment. No subscription.</small>
-          </div>
-        )}
+            {!bidValid && bidDollars !== "" && <small className="form-error">Enter at least {formatPrice(minBidCents)} in whole dollars.</small>}
+            <small className="bid-hint">Minimum {formatPrice(minBidCents)} · adjust by $1</small>
+        </label>
         <button
           className="primary-button"
           type="button"
-          disabled={checkoutState === "loading" || (isOutbid ? !bidValid : price === null)}
+          disabled={checkoutState === "loading" || !bidValid}
           onClick={beginCheckout}
         >
           {checkoutState === "loading"
