@@ -1,0 +1,95 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { BrandIcon } from "./BrandIcon";
+import { displayHost, readableTextColor } from "../lib/favicon";
+import { formatPrice } from "../lib/pricing";
+import { minuteIndexToSlug, minuteIndexToTime, timeAgo } from "../lib/time";
+import type { OwnedMinute } from "../lib/types";
+
+type SortKey = "bid" | "clicks" | "newest";
+
+const TABS: { key: SortKey; label: string }[] = [
+  { key: "bid", label: "HIGHEST BID" },
+  { key: "clicks", label: "MOST CLICKED" },
+  { key: "newest", label: "NEWEST" },
+];
+
+const comparators: Record<SortKey, (a: OwnedMinute, b: OwnedMinute) => number> = {
+  bid: (a, b) => b.purchasePriceCents - a.purchasePriceCents,
+  clicks: (a, b) => b.outboundClicks - a.outboundClicks,
+  newest: (a, b) => new Date(b.ownedSince).getTime() - new Date(a.ownedSince).getTime(),
+};
+
+const CATEGORY_ICON: Record<string, string> = {
+  "Dev tools": "◈",
+  Payments: "▤",
+  Productivity: "⚡",
+  Design: "✎",
+  Infrastructure: "☁",
+  Video: "▶",
+  AI: "✦",
+};
+
+export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
+  const [sort, setSort] = useState<SortKey>("bid");
+  const ranked = useMemo(() => [...owners].sort(comparators[sort]), [owners, sort]);
+
+  return (
+    <>
+      <div className="leaderboard-tabs" role="tablist" aria-label="Sort leaderboard">
+        {TABS.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            role="tab"
+            aria-selected={sort === tab.key}
+            className={sort === tab.key ? "active" : ""}
+            onClick={() => setSort(tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <ol className="lb-list">
+        {ranked.map((owner, index) => {
+          const product = owner.product;
+          const host = displayHost(product.websiteUrl);
+          const slug = minuteIndexToSlug(owner.minuteIndex);
+          const claimCents = owner.purchasePriceCents + 100;
+          return (
+            <li
+              key={owner.minuteIndex}
+              className={`lb-card ${index === 0 ? "lb-card-top" : ""}`}
+              style={{ "--row-accent": product.accentColor, "--row-ink": readableTextColor(product.accentColor) } as React.CSSProperties}
+            >
+              <Link className="lb-claim-pill" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
+                claim this rank for {formatPrice(claimCents)}
+              </Link>
+              <span className="lb-rank">#{index + 1}</span>
+              <BrandIcon websiteUrl={product.websiteUrl} fallback={product.shortName} size={128} className="lb-logo" imgClassName="lb-logo-img" />
+              <div className="lb-main">
+                <a className="lb-headline" href={product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored">
+                  <strong>{product.name}</strong> <span className="lb-sep">·</span> {product.tagline}
+                </a>
+                <p className="lb-desc">{product.description}</p>
+                <div className="lb-meta">
+                  {product.category && <span className="lb-cat">{CATEGORY_ICON[product.category] ?? "◆"} {product.category}</span>}
+                  <span>{timeAgo(owner.ownedSince)}</span>
+                  <a href={product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored" className="lb-domain">{host}</a>
+                  <span>{owner.outboundClicks.toLocaleString()} clicks</span>
+                  <Link href={`/minute/${slug}`} className="lb-details">see details</Link>
+                </div>
+              </div>
+              <div className="lb-right">
+                <div className="lb-price">{formatPrice(owner.purchasePriceCents)}</div>
+                <div className="lb-price-label">{minuteIndexToTime(owner.minuteIndex)} UTC</div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </>
+  );
+}
