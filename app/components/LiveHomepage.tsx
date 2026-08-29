@@ -177,7 +177,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
       <div className="featured-copy">
         <span className="eyebrow featured-eyebrow">
           <span className="live-badge"><i /></span>
-          <em>{state.time} IS OPEN</em>{champion ? <> · REIGNING BID {formatPrice(champion.purchasePriceCents)}</> : <> · FIRST LISTING</>}
+          <em>{state.time} IS OPEN</em>{champion ? <> · REIGNING BID {formatPrice(champion.purchasePriceCents)}</> : <> · BE THE FIRST TO CLAIM IT</>}
         </span>
         {champion ? <>
           <div className="owner-heading">
@@ -186,12 +186,12 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
           </div>
           <p className="takeover-tagline">{champion.product.tagline}</p>
         </> : <>
-          <div className="owner-heading"><h1>Your brand here.</h1></div>
-          <p className="takeover-tagline">Be the first product featured on Buy1Minute.</p>
+          <div className="owner-heading"><h1>Own the next 60 seconds.</h1></div>
+          <p className="takeover-tagline">Put your product on the homepage at this exact minute, every day.</p>
         </>}
         <div className="featured-actions">
-          {champion && <><a className="primary-link" href={champion.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => sendEvent("outbound_click", champion.minuteIndex)}>Visit <span>↗</span></a>
-          <a className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>Outbid the champion →</a></>}
+          {champion ? <><a className="primary-link" href={champion.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored" onClick={() => sendEvent("outbound_click", champion.minuteIndex)}>Visit <span>↗</span></a>
+          <a className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>Outbid the champion →</a></> : <a className="primary-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}`}>Claim this minute <span>→</span></a>}
         </div>
       </div>
       <aside className="claim-block featured-claim">
