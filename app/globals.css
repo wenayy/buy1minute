@@ -491,3 +491,5 @@
 }
 /* Gentle pointer response on the featured brand mark. */
 .logo-mark-interactive{transform:translate3d(var(--logo-dx,0px),var(--logo-dy,0px),0) rotate(var(--logo-tilt,0deg));transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease;will-change:transform}.logo-mark-interactive:hover{box-shadow:0 10px 24px rgba(0,0,0,.18)}
+/* Live status on every minute detail page. */
+.minute-live-countdown{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font:700 .55rem var(--font-geist-mono);letter-spacing:.08em;text-transform:uppercase}.minute-live-countdown.is-live{color:var(--signal)}.minute-live-countdown i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:live-flicker 1.5s steps(1,end) infinite}

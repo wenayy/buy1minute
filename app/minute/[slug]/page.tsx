@@ -4,6 +4,7 @@ import { BrandIcon } from "../../components/BrandIcon";
 import { LogoMark } from "../../components/LogoMark";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
+import { MinuteCountdown } from "../../components/MinuteCountdown";
 import { displayHost } from "../../lib/favicon";
 import { formatPrice } from "../../lib/pricing";
 import { getMinuteState } from "../../lib/seed-data";
@@ -43,6 +44,7 @@ export default async function MinutePage({ params }: PageProps) {
           <div className="minute-title">
             <span className="eyebrow">A PERMANENT MINUTE</span>
             <strong>{minute.time}</strong>
+            <MinuteCountdown minuteIndex={index} />
             <span>OWNED BY</span>
           </div>
           <div className="minute-owner-card">
