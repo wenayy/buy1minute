@@ -38,6 +38,7 @@ export const minutePricing = sqliteTable("minute_pricing", {
 export const ownerships = sqliteTable("ownerships", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull(),
+  reservationId: text("reservation_id"),
   productId: text("product_id"),
   purchasedAt: text("purchased_at").notNull(),
   purchasePriceCents: integer("purchase_price_cents").notNull(),

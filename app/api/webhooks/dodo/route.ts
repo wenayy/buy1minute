@@ -104,7 +104,7 @@ export async function POST(request: Request) {
         );
       }
       statements.push(
-        database.prepare("INSERT INTO ownerships (id, user_id, product_id, purchased_at, purchase_price_cents, active) VALUES (?, ?, NULL, ?, ?, 1)").bind(ownershipId, reservation.user_id ?? "pending-setup", now, amount),
+        database.prepare("INSERT INTO ownerships (id, user_id, reservation_id, product_id, purchased_at, purchase_price_cents, active) VALUES (?, ?, ?, NULL, ?, ?, 1)").bind(ownershipId, reservation.user_id ?? "pending-setup", reservationId, now, amount),
         ...indices.map((index) => database.prepare("INSERT INTO ownership_minutes (ownership_id, minute_index) VALUES (?, ?)").bind(ownershipId, index)),
         database.prepare("UPDATE reservations SET status = 'converted' WHERE id = ?").bind(reservationId),
         database.prepare("UPDATE reservation_minutes SET active = 0 WHERE reservation_id = ?").bind(reservationId),

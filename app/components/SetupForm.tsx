@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
-import { displayHost, readableTextColor } from "../lib/favicon";
+import { displayHost } from "../lib/favicon";
 import { minuteIndexToTime } from "../lib/time";
 
 type FormState = {
@@ -14,28 +14,21 @@ type FormState = {
   xHandle: string;
 };
 
-const DEFAULT_ACCENT = "#ff6a3d";
-
 const initialForm: FormState = {
   name: "Your product",
   websiteUrl: "https://example.com",
   tagline: "The line people will remember.",
   description: "Tell the internet what you make and why it matters.",
-  accentColor: DEFAULT_ACCENT,
+  accentColor: "#ff4e24",
   xHandle: "",
 };
 
-const HEX6 = /^#[0-9a-fA-F]{6}$/;
-function safeHex(value: string): string {
-  return HEX6.test(value) ? value : DEFAULT_ACCENT;
-}
-
-export function SetupForm({ minuteIndex }: { minuteIndex: number }) {
+export function SetupForm({ minuteIndex, reservationId }: { minuteIndex: number; reservationId: string | null }) {
   const [form, setForm] = useState(initialForm);
   const [published, setPublished] = useState(false);
+  const [error, setError] = useState("");
   const initials = useMemo(() => form.name.split(/\s+/).map((word) => word[0]).join("").slice(0, 2).toUpperCase() || "YM", [form.name]);
   const host = useMemo(() => displayHost(form.websiteUrl), [form.websiteUrl]);
-  const accent = safeHex(form.accentColor);
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -47,8 +40,13 @@ export function SetupForm({ minuteIndex }: { minuteIndex: number }) {
     <div className="setup-layout">
       <form
         className="brand-form"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
+          setError("");
+          if (!reservationId) { setPublished(true); return; }
+          const response = await fetch("/api/listings", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ reservationId, ...form, xHandle: form.xHandle }) });
+          const result = (await response.json()) as { error?: string };
+          if (!response.ok) { setError(result.error ?? "Your payment is still being confirmed."); return; }
           setPublished(true);
         }}
       >
@@ -70,9 +68,10 @@ export function SetupForm({ minuteIndex }: { minuteIndex: number }) {
         </div>
         <button className="primary-button" type="submit">PUBLISH MY MINUTE →</button>
         <small>Your logo is detected from your website. The Buy1Minute visual theme stays consistent for every product.</small>
-        {published && <div className="success-note">Preview saved. Connect production storage to publish this listing publicly.</div>}
+        {published && <div className="success-note">Published. Your minute is now live in the Buy1Minute rotation.</div>}
+        {error && <div className="form-error">{error}</div>}
       </form>
-      <section className="brand-preview" style={{ "--preview-accent": accent, "--preview-ink": readableTextColor(accent) } as React.CSSProperties}>
+      <section className="brand-preview" style={{ "--preview-accent": "#ff4e24", "--preview-ink": "#0a0a09" } as React.CSSProperties}>
         <div className="preview-bar"><span>LIVE PREVIEW</span><span>{minuteIndexToTime(minuteIndex)} UTC</span></div>
         <div className="preview-content">
           <span>THIS MINUTE BELONGS TO</span>

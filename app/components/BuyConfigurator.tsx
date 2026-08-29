@@ -111,8 +111,8 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
               : "CONTINUE TO SECURE CHECKOUT →"}
         </button>
         {checkoutState === "error" && <p className="form-error">{checkoutError || "Checkout could not start. Try again."}</p>}
-        <small className="checkout-note">One purchase claims exactly one 60-second slot.</small>
-        <small className="checkout-note">Your minute is reserved for 10 minutes after checkout begins.</small>
+        <small className="checkout-note">One payment gives you one 60-second homepage takeover each day.</small>
+        <small className="checkout-note">Complete payment, then publish your name, link, and description.</small>
         <Link className="text-link" href={`/minute/${minuteIndexToSlug(startIndex)}`}>← Back to minute</Link>
       </section>
     </div>
