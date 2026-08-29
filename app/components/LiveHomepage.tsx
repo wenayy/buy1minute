@@ -282,7 +282,7 @@ function HomeLeaderboard({ minuteIndex, owners }: { minuteIndex: number; owners:
                 <LogoMark product={owner.product} small />
                 <span>
                   <strong>{owner.product.name}</strong>
-                  <small>{minuteIndexToTime(owner.minuteIndex)} UTC{isLive ? " · LIVE NOW" : ""}</small>
+                    <small>{minuteIndexToTime(owner.minuteIndex)} UTC · {owner.product.category ?? "OTHER"}{isLive ? " · LIVE NOW" : ""}</small>
                 </span>
               </a>
               <span className="home-lb-bid">

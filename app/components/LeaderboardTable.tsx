@@ -31,7 +31,12 @@ const CATEGORY_ICON: Record<string, string> = {
 
 export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
   const [sort, setSort] = useState<SortKey>("bid");
-  const ranked = useMemo(() => [...owners].sort(comparators[sort]), [owners, sort]);
+  const [category, setCategory] = useState("ALL");
+  const categories = useMemo(() => Array.from(new Set(owners.map((owner) => owner.product.category).filter(Boolean))).sort(), [owners]);
+  const ranked = useMemo(
+    () => owners.filter((owner) => category === "ALL" || owner.product.category === category).sort(comparators[sort]),
+    [owners, sort, category],
+  );
 
   return (
     <>
@@ -49,6 +54,13 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
           </button>
         ))}
       </div>
+      <label className="leaderboard-category-filter">
+        <span>CATEGORY</span>
+        <select value={category} onChange={(event) => setCategory(event.target.value)} aria-label="Filter by category">
+          <option value="ALL">ALL CATEGORIES</option>
+          {categories.map((item) => <option key={item} value={item}>{item.toUpperCase()}</option>)}
+        </select>
+      </label>
       <ol className="lb-list">
         {ranked.map((owner, index) => {
           const product = owner.product;
