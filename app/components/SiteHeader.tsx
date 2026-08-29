@@ -1,11 +1,10 @@
-import Link from "next/link";
-
 export function SiteHeader({ inverse = false }: { inverse?: boolean }) {
   return (
     <header className={`site-header ${inverse ? "site-header-inverse" : ""}`}>
-      <Link className="wordmark" href="/" aria-label="Buy1Minute home">
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+      <a className="wordmark" href="/" aria-label="Buy1Minute home">
         BUY<span>1</span>MINUTE
-      </Link>
+      </a>
       <nav aria-label="Primary navigation">
         <a href="/explore">Explore</a>
         <a href="/leaderboard">Leaderboard</a>

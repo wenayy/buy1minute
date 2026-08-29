@@ -8,6 +8,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { displayHost } from "../../lib/favicon";
 import { formatPrice } from "../../lib/pricing";
 import { getMinuteState } from "../../lib/seed-data";
+import { databaseBinding, getDatabaseMinute } from "../../lib/live-db";
 import { minuteIndexToSlug, minuteIndexToTime, parseMinuteSlug } from "../../lib/time";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -30,13 +31,15 @@ export default async function MinutePage({ params }: PageProps) {
   const index = parseMinuteSlug(slug);
   if (index === null) notFound();
   const minute = getMinuteState(index);
+  const live = await getDatabaseMinute(databaseBinding(), index);
+  const owner = live?.owner ?? minute.owner;
   const previous = index === 0 ? 1_439 : index - 1;
   const next = index === 1_439 ? 0 : index + 1;
 
   return (
     <main className="page-shell minute-page">
       <SiteHeader />
-      {minute.owner ? (
+      {owner ? (
         <section className="minute-detail-owned">
           <div className="minute-title">
             <span className="eyebrow">A PERMANENT MINUTE</span>
@@ -45,34 +48,35 @@ export default async function MinutePage({ params }: PageProps) {
           </div>
           <div className="minute-owner-card">
             <div className="owner-heading">
-              <LogoMark product={minute.owner.product} />
-              <h1>{minute.owner.product.name}</h1>
+              <LogoMark product={owner.product} />
+              <h1>{owner.product.name}</h1>
             </div>
-            <p className="takeover-tagline">{minute.owner.product.tagline}</p>
-            <p className="takeover-description">{minute.owner.product.description}</p>
-            <a className="primary-link" href={minute.owner.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored">
+            <p className="takeover-tagline">{owner.product.tagline}</p>
+            <p className="takeover-description">{owner.product.description}</p>
+            <a className="primary-link" href={owner.product.websiteUrl} target="_blank" rel="noopener noreferrer sponsored">
               Visit <span>↗</span>
             </a>
-            <Link className="text-link minute-outbid-link" href={`/buy/${slug}?outbid=${minute.owner.purchasePriceCents}`}>
-              Outbid for {formatPrice(minute.owner.purchasePriceCents + 100)} →
+            <Link className="text-link minute-outbid-link" href={`/buy/${slug}?outbid=${owner.purchasePriceCents}`}>
+              Outbid for {formatPrice(owner.purchasePriceCents + 100)} →
             </Link>
           </div>
           <a
             className="minute-brand-card"
-            href={minute.owner.product.websiteUrl}
+            href={owner.product.websiteUrl}
             target="_blank"
             rel="noopener noreferrer sponsored"
           >
-            <span className="minute-brand-top">{minute.owner.product.category ?? "FEATURED"}<span>↗</span></span>
-            <BrandIcon websiteUrl={minute.owner.product.websiteUrl} fallback={minute.owner.product.shortName} size={256} className="minute-brand-icon" imgClassName="minute-brand-icon-img" />
+            <span className="minute-brand-top">{owner.product.category ?? "FEATURED"}<span>↗</span></span>
+            <BrandIcon websiteUrl={owner.product.websiteUrl} fallback={owner.product.shortName} size={256} className="minute-brand-icon" imgClassName="minute-brand-icon-img" />
             <div className="minute-brand-foot">
-              <strong>{minute.owner.product.name}</strong>
-              <span>{displayHost(minute.owner.product.websiteUrl)}</span>
+              <strong>{owner.product.name}</strong>
+              <span>{displayHost(owner.product.websiteUrl)}</span>
+              {owner.product.xHandle && <span className="minute-social">𝕏 {owner.product.xHandle.replace(/^@/, "")}</span>}
             </div>
           </a>
           <div className="minute-stats">
-            <div><span>OWNED SINCE</span><strong>{new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(minute.owner.ownedSince))}</strong></div>
-            <div><span>CLICKS</span><strong>{minute.owner.outboundClicks.toLocaleString("en-US")}</strong></div>
+            <div><span>OWNED SINCE</span><strong>{new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(owner.ownedSince))}</strong></div>
+            <div><span>CLICKS</span><strong>{owner.outboundClicks.toLocaleString("en-US")}</strong></div>
           </div>
         </section>
       ) : (

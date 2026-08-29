@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { BrandIcon } from "./BrandIcon";
 import { displayHost } from "../lib/favicon";
-import { minuteIndexToTime } from "../lib/time";
+import { minuteIndexToSlug, minuteIndexToTime } from "../lib/time";
 
 type FormState = {
   name: string;
@@ -45,11 +45,12 @@ export function SetupForm({ minuteIndex, reservationId }: { minuteIndex: number;
         onSubmit={async (event) => {
           event.preventDefault();
           setError("");
-          if (!reservationId) { setPublished(true); return; }
+          if (!reservationId) { setPublished(true); window.setTimeout(() => window.location.assign(`/minute/${minuteIndexToSlug(minuteIndex)}`), 500); return; }
           const response = await fetch("/api/listings", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ reservationId, ...form, xHandle: form.xHandle }) });
           const result = (await response.json()) as { error?: string };
           if (!response.ok) { setError(result.error ?? "Your payment is still being confirmed."); return; }
           setPublished(true);
+          window.setTimeout(() => window.location.assign(`/minute/${minuteIndexToSlug(minuteIndex)}`), 500);
         }}
       >
         <span className="eyebrow">BRAND SETUP · {minuteIndexToTime(minuteIndex)}</span>
