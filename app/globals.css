@@ -423,3 +423,24 @@
   .checkout-total{margin-top:34px}
   .bid-input{margin-top:26px}
 }
+
+/* Softer contrast and denser leaderboard presentation. */
+:root{--ink:#e4e1d8;--muted:#85847d;--line:rgba(228,225,216,.13);--line-strong:rgba(228,225,216,.27);--signal:#e86645;--acid:#c8e85b}
+.lb-card{min-height:84px;padding-top:10px;padding-bottom:10px}
+.lb-logo{width:72px!important;height:72px!important}
+.home-lb-row{min-height:60px;padding-top:6px;padding-bottom:6px}
+.home-lb-actions{opacity:0;transform:translateX(6px);transition:opacity .18s ease,transform .18s ease}
+.home-lb-row:hover .home-lb-actions,.home-lb-row:focus-within .home-lb-actions{opacity:1;transform:none}
+.home-lb-clicks{display:none}
+.home-lb-row{grid-template-columns:42px 1fr 130px auto}
+.featured-takeover{position:relative;isolation:isolate}
+.featured-takeover::after{content:"";position:absolute;inset:10px;border:1px solid color-mix(in srgb,var(--champ-accent) 28%,transparent);pointer-events:none;animation:featured-breathe 4s ease-in-out infinite}
+.featured-claim{animation:featured-float 5s ease-in-out infinite}
+@keyframes featured-breathe{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.8;transform:scale(1.006)}}
+@keyframes featured-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media(max-width:760px){
+  .home-lb-row{grid-template-columns:34px 1fr auto}
+  .home-lb-actions{opacity:1;transform:none}
+  .featured-takeover::after{inset:6px}
+}
+@media(prefers-reduced-motion:reduce){.featured-takeover::after,.featured-claim{animation:none}}
