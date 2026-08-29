@@ -503,3 +503,16 @@
 .preview-content h2{margin:0 0 2px}
 .preview-content p{margin:18px 0 0;line-height:1.25}
 .preview-content>span{display:block;margin-bottom:2px}
+
+/* ═══ Round 8: clean empty-state claim card (replaces landing-orbit) ═══ */
+.featured-claim-empty{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:16px;min-height:300px;padding:clamp(28px,3vw,40px);background:linear-gradient(150deg,color-mix(in srgb,var(--signal) 13%,transparent),transparent 62%);border-color:color-mix(in srgb,var(--signal) 34%,var(--line))}
+.featured-claim-empty .claim-eyebrow{color:var(--muted);font:.6rem var(--font-geist-mono);letter-spacing:.1em;text-transform:uppercase}
+.claim-timer{position:relative;display:inline-flex;align-items:baseline;margin:4px 0 8px}
+.claim-timer>strong{position:relative;z-index:2;font-size:clamp(3.4rem,6vw,5.2rem);line-height:.85;letter-spacing:-.06em;color:var(--ink)}
+.claim-timer>strong em{font-style:normal;font-size:.28em;letter-spacing:.04em;color:var(--signal);margin-left:.28em;vertical-align:top}
+.claim-ring{position:absolute;left:-16px;top:50%;width:118px;height:118px;border-radius:50%;border:1px solid color-mix(in srgb,var(--signal) 55%,transparent);z-index:1;transform:translateY(-50%);animation:claim-pulse 2.6s ease-in-out infinite}
+.claim-ring::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid color-mix(in srgb,var(--ink) 16%,transparent)}
+@keyframes claim-pulse{0%,100%{transform:translateY(-50%) scale(1);opacity:.75}50%{transform:translateY(-50%) scale(1.1);opacity:.4}}
+.featured-claim-empty .primary-link{width:100%;position:relative;z-index:2}
+.featured-claim-empty>small{position:relative;z-index:2;color:var(--muted);font-size:.75rem;line-height:1.55}
+@media(prefers-reduced-motion:reduce){.claim-ring{animation:none}}
