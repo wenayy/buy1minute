@@ -33,3 +33,9 @@ test("live Visit hover remains high-contrast and long names stay contained", asy
   assert.match(css, /\.owned-takeover \.owner-cta:hover\{background:#0a0a09;color:#fff/);
   assert.match(css, /\.owned-takeover \.owner-heading h1\{[^}]*15cqw[^}]*overflow-wrap:anywhere/);
 });
+
+test("outbid action is visible without hover", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.outbid-link\{[^}]*color:#0a0a09!important[^}]*border:1px solid/);
+  assert.match(css, /\.outbid-link:hover,.outbid-link:focus-visible\{[^}]*background:#ff4e24/);
+});

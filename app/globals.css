@@ -119,7 +119,9 @@
 .home-lb-live .home-lb-visit{border-color:rgba(0,0,0,.4)}
 
 /* Outbid link in the live takeover */
-.outbid-link{display:inline-block;margin-top:16px;font:700 .6rem var(--font-geist-mono);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:3px}
+.outbid-link{display:inline-flex;align-items:center;margin-top:16px;min-height:40px;padding:0 13px;color:#0a0a09!important;background:transparent;border:1px solid rgba(10,10,9,.48);font:700 .6rem var(--font-geist-mono);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;transition:background .18s,color .18s,border-color .18s,transform .18s}
+.outbid-link:hover,.outbid-link:focus-visible{background:#ff4e24;color:#fff!important;border-color:#ff4e24;transform:translateY(-1px)}
+.minute-outbid-link{color:var(--signal)!important;font-weight:700;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:4px}
 
 /* ═══ Leaderboard page ═══ */
 .leaderboard-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;padding:52px 0 30px;flex-wrap:wrap}
