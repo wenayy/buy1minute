@@ -194,9 +194,10 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
           <a className="ghost-link" href={`/buy/${minuteIndexToSlug(champion.minuteIndex)}?outbid=${champion.purchasePriceCents}`}>Outbid the champion →</a></> : <a className="primary-link" href={`/buy/${minuteIndexToSlug(minuteIndex)}`}>Claim this minute <span>→</span></a>}
         </div>
       </div>
-      <aside className="claim-block featured-claim">
-        <span>CLAIM {state.time}</span>
-        <strong>{priceLabel}</strong>
+      <aside className={`claim-block featured-claim ${champion ? "" : "featured-claim-empty"}`}>
+        {!champion && <div className="landing-orbit" aria-hidden="true"><span>BUY</span><strong>1:00</strong><i /></div>}
+        <span>{champion ? `CLAIM ${state.time}` : "YOUR DAILY SPOT"}</span>
+        <strong>{champion ? priceLabel : "60 SEC"}</strong>
         {state.priceCents === null ? (
           <a className="primary-link muted-link" href="/explore">Explore available minutes</a>
         ) : (
@@ -204,7 +205,7 @@ function FeaturedTakeover({ state, champion, minuteIndex }: { state: MinuteState
             Claim this minute <span>→</span>
           </a>
         )}
-        <small>No one owns {state.time} yet. Claim it and take over the homepage every day.</small>
+        <small>{champion ? `No one owns ${state.time} yet. Claim it and take over the homepage every day.` : "One minute. One product. A daily homepage takeover."}</small>
       </aside>
     </section>
   );
