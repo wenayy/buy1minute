@@ -21,6 +21,8 @@ function postgresSql(sqlText: string): string {
   // D1 stores booleans as SQLite integers; Neon stores these columns as booleans.
   result = result.replace(/\b(active|is_outbid)\s*=\s*1\b/gi, "$1 = TRUE");
   result = result.replace(/\b(active|is_outbid)\s*=\s*0\b/gi, "$1 = FALSE");
+  result = result.replace(/(reservation_minutes[^;]*VALUES\s*\([^)]*),\s*1\)/gi, "$1, TRUE)");
+  result = result.replace(/(ownerships[^;]*active\)\s*VALUES\s*\([^)]*),\s*1\)/gi, "$1, TRUE)");
   result = result.replace(/\?/g, () => `$${++index}`);
   if (isIgnoreInsert) result = `${result} ON CONFLICT DO NOTHING`;
   return result;
@@ -37,7 +39,10 @@ export function createNeonD1(connectionString: string) {
     const query = postgresSql(text);
     return {
       bind(...bound: unknown[]) {
-        return statement(text, bound);
+        const normalized = /\bis_outbid\b/i.test(text)
+          ? bound.map((value, index) => (index === 3 && (value === 0 || value === 1) ? Boolean(value) : value))
+          : bound;
+        return statement(text, normalized);
       },
       async first<T extends Row>(): Promise<T | null> {
         await ensureSchema();
