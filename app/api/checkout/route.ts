@@ -24,8 +24,9 @@ async function planCheckout(body: { minuteIndices?: unknown; minuteIndex?: unkno
     const live = await getDatabaseMinute(database, minuteIndex as number);
     const currentBidCents = live?.bidCents ?? ownershipByMinute.get(minuteIndex as number)?.purchasePriceCents;
     if (currentBidCents === undefined) return Response.json({ error: "This minute is not owned, so there is nothing to outbid" }, { status: 409 });
-    if (!Number.isInteger(bidCents) || (bidCents as number) <= currentBidCents) {
-      return Response.json({ error: "Your bid must be higher than the current winning bid" }, { status: 400 });
+    const minimumBidCents = Math.max(100, currentBidCents + 100);
+    if (!Number.isInteger(bidCents) || (bidCents as number) < minimumBidCents || (bidCents as number) % 100 !== 0) {
+      return Response.json({ error: `Your bid must be at least $${minimumBidCents / 100} in whole dollars` }, { status: 400 });
     }
     return { minuteIndices: [minuteIndex as number], totalCents: bidCents as number, isOutbid: true };
   }

@@ -221,6 +221,7 @@
 /* Integer bid field: hide native spinner, add nudge */
 .bid-field input{-moz-appearance:textfield;appearance:textfield}
 .bid-field input::-webkit-outer-spin-button,.bid-field input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bid-step{width:38px;height:38px;flex:0 0 38px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-size:1.3rem;line-height:1;cursor:pointer;transition:background .15s,color .15s,border-color .15s}.bid-step:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}.bid-hint{color:var(--muted);font:.58rem var(--font-geist-mono);letter-spacing:.05em}
 .bid-nudge{display:flex;flex-direction:column;margin-left:auto}
 .bid-nudge button{width:34px;height:21px;background:none;border:1px solid var(--line-strong);color:var(--muted);cursor:pointer;font-size:.58rem;line-height:1;display:flex;align-items:center;justify-content:center}
 .bid-nudge button:first-child{border-bottom:0}

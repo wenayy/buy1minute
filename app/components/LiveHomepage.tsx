@@ -269,7 +269,7 @@ function HomeLeaderboard({ minuteIndex, owners }: { minuteIndex: number; owners:
   return (
     <section className="home-leaderboard" aria-label="Minutes ranked by highest bid">
       <div className="home-lb-heading">
-        <span>THE LEADERBOARD · HIGHEST BIDS OWN THE MINUTE</span>
+        <span>TOP BIDS · HIGHEST BIDS OWN THE MINUTE</span>
         <a href="/leaderboard">See the full leaderboard →</a>
       </div>
       <ol className="home-lb-list">

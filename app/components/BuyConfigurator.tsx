@@ -13,7 +13,7 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
   const price = getCheckoutTotal([startIndex]);
 
   // Bids are whole dollars and must beat the winner by exactly at least $1.
-  const minBidCents = isOutbid ? (currentBidCents ?? 0) + 100 : 0;
+  const minBidCents = isOutbid ? Math.max(100, (currentBidCents ?? 0) + 100) : 0;
   const [bidDollars, setBidDollars] = useState<string>(isOutbid ? String(minBidCents / 100) : "");
   const bidCents = parseDollarAmountToCents(bidDollars);
   const bidValid = isOutbid && bidCents !== null && bidCents >= minBidCents;
@@ -73,6 +73,7 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
           <label className="bid-input">
             <span>YOUR PRICE · MIN {formatPrice(minBidCents)}</span>
             <div className="bid-field">
+              <button className="bid-step" type="button" onClick={() => nudgeBid(-100)} aria-label="Decrease bid by one dollar">−</button>
               <i>$</i>
               <input
                 type="text"
@@ -83,11 +84,9 @@ export function BuyConfigurator({ startIndex, currentBidCents = null }: { startI
                   setBidDollars(next);
                 }}
               />
-              <div className="bid-nudge">
-                <button type="button" onClick={() => nudgeBid(100)} aria-label="Increase bid by one dollar">▲</button>
-                <button type="button" onClick={() => nudgeBid(-100)} aria-label="Decrease bid by one dollar">▼</button>
-              </div>
+              <button className="bid-step" type="button" onClick={() => nudgeBid(100)} aria-label="Increase bid by one dollar">+</button>
             </div>
+            <small className="bid-hint">Whole dollars only · adjust by $1</small>
             {!bidValid && bidDollars !== "" && <small className="form-error">Enter at least {formatPrice(minBidCents)} (whole dollars).</small>}
           </label>
         ) : (

@@ -2,12 +2,11 @@ import { LeaderboardTable } from "../components/LeaderboardTable";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { formatPrice } from "../lib/pricing";
-import { seededOwnerships } from "../lib/seed-data";
 import { databaseBinding, getDatabaseOwners } from "../lib/live-db";
 
 export default async function LeaderboardPage() {
   const liveOwners = await getDatabaseOwners(databaseBinding());
-  const owners = liveOwners.length ? liveOwners : seededOwnerships;
+  const owners = liveOwners;
   const totalBids = owners.reduce((sum, owner) => sum + owner.purchasePriceCents, 0);
   const topBid = owners.length ? Math.max(...owners.map((owner) => owner.purchasePriceCents)) : 0;
   return (
