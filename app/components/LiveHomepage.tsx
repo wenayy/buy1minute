@@ -74,7 +74,7 @@ export function LiveHomepage() {
       className={`live-home ${current.owner ? "live-owned" : "live-available"} ${transitioning ? "is-transitioning" : ""}`}
       style={current.owner ? ({ "--takeover-accent": "#f0ede4", "--takeover-ink": "#0a0a09" } as React.CSSProperties) : undefined}
     >
-      <SiteHeader inverse={Boolean(current.owner)} />
+      <SiteHeader />
       <div className="live-frame" key={minuteIndex}>
         <ClockRail now={now} time={current.time} />
         {current.owner ? (
@@ -268,6 +268,10 @@ function HomeLeaderboard({ minuteIndex }: { minuteIndex: number }) {
               <span className="home-lb-bid">
                 <strong>{formatPrice(owner.purchasePriceCents)}</strong>
                 <small>WINNING BID</small>
+              </span>
+              <span className="home-lb-clicks">
+                <strong>{owner.outboundClicks.toLocaleString("en-US")}</strong>
+                <small>CLICKS</small>
               </span>
               <div className="home-lb-actions">
                 <a

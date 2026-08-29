@@ -81,6 +81,10 @@ export function LeaderboardTable({ owners }: { owners: OwnedMinute[] }) {
                 <div className="lb-price">{formatPrice(owner.purchasePriceCents)}</div>
                 <div className="lb-price-label">{minuteIndexToTime(owner.minuteIndex)} UTC</div>
               </div>
+              <div className="rank-clicks">
+                <strong>{owner.outboundClicks.toLocaleString("en-US")}</strong>
+                <small>CLICKS</small>
+              </div>
             </li>
           );
         })}

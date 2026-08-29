@@ -72,6 +72,7 @@ export default async function MinutePage({ params }: PageProps) {
           </a>
           <div className="minute-stats">
             <div><span>OWNED SINCE</span><strong>{new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(minute.owner.ownedSince))}</strong></div>
+            <div><span>CLICKS</span><strong>{minute.owner.outboundClicks.toLocaleString("en-US")}</strong></div>
           </div>
         </section>
       ) : (
@@ -88,9 +89,9 @@ export default async function MinutePage({ params }: PageProps) {
         </section>
       )}
       <nav className="minute-pager" aria-label="Previous and next minute">
-        <Link href={`/minute/${minuteIndexToSlug(previous)}`}><span>← PREVIOUS</span><strong>{minuteIndexToTime(previous)}</strong></Link>
-        <Link href="/explore"><span>ALL MINUTES</span><strong>1,440</strong></Link>
-        <Link href={`/minute/${minuteIndexToSlug(next)}`}><span>NEXT →</span><strong>{minuteIndexToTime(next)}</strong></Link>
+        <a href={`/minute/${minuteIndexToSlug(previous)}`}><span>← PREVIOUS</span><strong>{minuteIndexToTime(previous)}</strong></a>
+        <a href="/explore"><span>ALL MINUTES</span><strong>1,440</strong></a>
+        <a href={`/minute/${minuteIndexToSlug(next)}`}><span>NEXT →</span><strong>{minuteIndexToTime(next)}</strong></a>
       </nav>
       <SiteFooter />
     </main>

@@ -10,6 +10,7 @@ type FormState = {
   websiteUrl: string;
   tagline: string;
   description: string;
+  category: string;
   accentColor: string;
   xHandle: string;
 };
@@ -19,6 +20,7 @@ const initialForm: FormState = {
   websiteUrl: "https://example.com",
   tagline: "The line people will remember.",
   description: "Tell the internet what you make and why it matters.",
+  category: "Other",
   accentColor: "#ff4e24",
   xHandle: "",
 };
@@ -57,6 +59,7 @@ export function SetupForm({ minuteIndex, reservationId }: { minuteIndex: number;
           <label><span>WEBSITE URL</span><input required type="url" value={form.websiteUrl} onChange={(e) => updateField("websiteUrl", e.target.value)} /></label>
           <label className="form-wide"><span>TAGLINE</span><input required maxLength={100} value={form.tagline} onChange={(e) => updateField("tagline", e.target.value)} /></label>
           <label className="form-wide"><span>SHORT DESCRIPTION</span><textarea required maxLength={220} rows={4} value={form.description} onChange={(e) => updateField("description", e.target.value)} /></label>
+          <label><span>CATEGORY</span><select required value={form.category} onChange={(e) => updateField("category", e.target.value)}><option>AI</option><option>Design</option><option>Dev tools</option><option>Education</option><option>Finance</option><option>Infrastructure</option><option>Marketing</option><option>Productivity</option><option>Payments</option><option>Shopping</option><option>Social</option><option>Video</option><option>Other</option></select></label>
           <div className="form-wide favicon-field">
             <span className="favicon-field-label">BRAND ICON</span>
             <div className="favicon-preview-row">
@@ -78,7 +81,7 @@ export function SetupForm({ minuteIndex, reservationId }: { minuteIndex: number;
           <BrandIcon websiteUrl={form.websiteUrl} fallback={initials} size={128} className="preview-logo-chip" imgClassName="preview-logo-image" />
           <h2>{form.name || "Your product"}</h2>
           <p>{form.tagline}</p>
-          <a href={form.websiteUrl || "#"} onClick={(event) => event.preventDefault()}>VISIT {(form.name || "site").toUpperCase()} ↗</a>
+          <a href={form.websiteUrl || "#"} onClick={(event) => event.preventDefault()}>VISIT ↗</a>
         </div>
         <div className="preview-brandcard">
           <span className="preview-brandcard-top">DAILY TAKEOVER · {minuteIndexToTime(minuteIndex)}</span>

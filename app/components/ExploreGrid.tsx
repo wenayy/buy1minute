@@ -118,6 +118,7 @@ function HourRow({ hour, minutes, currentMinute }: { hour: number; minutes: Minu
               ) : (
                 <strong className="tile-price">{formatPrice(minute.priceCents ?? 100)}</strong>
               )}
+              {minute.owner && <small className="minute-tile-clicks">{minute.owner.outboundClicks.toLocaleString("en-US")} clicks</small>}
               {minute.status === "available" ? (
                 <small className="minute-tile-cta">Claim →</small>
               ) : null}

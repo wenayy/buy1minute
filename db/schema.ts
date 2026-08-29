@@ -17,6 +17,7 @@ export const products = sqliteTable("products", {
   websiteUrl: text("website_url").notNull(),
   tagline: text("tagline").notNull(),
   description: text("description").notNull(),
+  category: text("category"),
   logoKey: text("logo_key"),
   screenshotKey: text("screenshot_key"),
   backgroundKey: text("background_key"),

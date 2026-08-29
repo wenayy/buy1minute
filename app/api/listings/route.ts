@@ -17,12 +17,14 @@ export async function POST(request: Request) {
   const websiteUrl = clean(body?.websiteUrl, 300);
   const tagline = clean(body?.tagline, 100);
   const description = clean(body?.description, 220);
+  const category = clean(body?.category, 40) || "Other";
   const socialHandle = clean(body?.xHandle, 80) || null;
   if (!reservationId || !name || !websiteUrl || !tagline || !description) return Response.json({ error: "Complete every required field" }, { status: 400 });
   try { new URL(websiteUrl); } catch { return Response.json({ error: "Enter a valid website URL" }, { status: 400 }); }
 
   const database = env.DB;
   if (!database) return Response.json({ error: "Listing storage is unavailable" }, { status: 503 });
+  await database.prepare("ALTER TABLE products ADD COLUMN category TEXT").run().catch(() => undefined);
   await database.prepare("ALTER TABLE ownerships ADD COLUMN reservation_id TEXT").run().catch(() => undefined);
   const requestUserId = request.headers.get("oai-authenticated-user-id");
   const reservation = await database.prepare("SELECT user_id, status FROM reservations WHERE id = ?").bind(reservationId).first<{ user_id: string | null; status: string }>();
@@ -40,7 +42,7 @@ export async function POST(request: Request) {
   const productId = crypto.randomUUID();
   await database.batch([
     database.prepare("INSERT OR IGNORE INTO users (id, email, display_name, role, created_at) VALUES (?, ?, ?, 'owner', ?)").bind(userId, email, name, now),
-    database.prepare("INSERT INTO products (id, user_id, name, slug, website_url, tagline, description, accent_color, social_handle, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, '#ff4e24', ?, ?, ?)").bind(productId, userId, name, slug, websiteUrl, tagline, description, socialHandle, now, now),
+    database.prepare("INSERT INTO products (id, user_id, name, slug, website_url, tagline, description, category, accent_color, social_handle, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '#ff4e24', ?, ?, ?)").bind(productId, userId, name, slug, websiteUrl, tagline, description, category, socialHandle, now, now),
     database.prepare("UPDATE ownerships SET product_id = ? WHERE id = ?").bind(productId, ownership.ownership_id),
   ]);
   return Response.json({ ok: true, minuteIndex: ownership.minute_index });
